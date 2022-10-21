@@ -1,0 +1,233 @@
+basePath: /api
+definitions:
+  auth.ClientRegistrationRequest:
+    properties:
+      email:
+        description: Email - user's email
+        type: string
+      firstName:
+        description: FirstName - user's first name
+        type: string
+      lastName:
+        description: LastName - user's last name
+        type: string
+      password:
+        description: Password - password
+        type: string
+    type: object
+  auth.ClientUser:
+    properties:
+      email:
+        description: Email - email
+        type: string
+      firstName:
+        description: FirstName - user's first name
+        type: string
+      id:
+        description: Id - user ID
+        type: string
+      lastName:
+        description: LastName - user's last name
+        type: string
+    type: object
+  auth.LoginRequest:
+    properties:
+      email:
+        description: Email - login
+        type: string
+      password:
+        description: Password - password
+        type: string
+    type: object
+  auth.LoginResponse:
+    properties:
+      token:
+        $ref: '#/definitions/auth.SessionToken'
+        description: Token - auth token must be passed as  "Authorization Bearer"
+          header for all the requests (except ones which don't require authorization)
+      userId:
+        description: UserId - ID of account
+        type: string
+    type: object
+  auth.SessionToken:
+    properties:
+      accessToken:
+        description: AccessToken
+        type: string
+      accessTokenExpiresAt:
+        description: AccessTokenExpiresAt - when access token expires
+        type: string
+      refreshToken:
+        description: RefreshToken
+        type: string
+      refreshTokenExpiresAt:
+        description: RefreshToken - when refresh token expires
+        type: string
+      sessionId:
+        description: SessionId - session ID
+        type: string
+    type: object
+  auth.SetPasswordRequest:
+    properties:
+      newPassword:
+        description: NewPassword - new password
+        type: string
+      prevPassword:
+        description: PrevPassword - current password
+        type: string
+    type: object
+  http.Error:
+    properties:
+      code:
+        description: Code is error code provided by error producer
+        type: string
+      details:
+        additionalProperties: true
+        description: Details is additional info provided by error producer
+        type: object
+      message:
+        description: Message is error description
+        type: string
+      translationKey:
+        description: TranslationKey is error code translation key
+        type: string
+      type:
+        description: Type is error type (panic, system, business)
+        type: string
+    type: object
+info:
+  contact:
+    email: support@africarealty.io
+    name: Api service support
+  description: AfricaRealty is an advanced realty service
+  title: AfricaRealty API
+  version: "1.0"
+paths:
+  /auth/login:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: auth request
+        in: body
+        name: loginRequest
+        required: true
+        schema:
+          $ref: '#/definitions/auth.LoginRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/auth.LoginResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/http.Error'
+      summary: logins user by email/password
+      tags:
+      - auth
+  /auth/logout:
+    post:
+      consumes:
+      - application/json
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: ""
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/http.Error'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/http.Error'
+      summary: logouts user
+      tags:
+      - auth
+  /auth/password:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: set password request
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/auth.SetPasswordRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: ""
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/http.Error'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/http.Error'
+      summary: sets a new password for the user
+      tags:
+      - auth
+  /auth/registration:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: registration request
+        in: body
+        name: regRequest
+        required: true
+        schema:
+          $ref: '#/definitions/auth.ClientRegistrationRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/auth.ClientUser'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/http.Error'
+      summary: registers a new client
+      tags:
+      - auth
+  /auth/token/refresh:
+    post:
+      consumes:
+      - application/json
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/auth.SessionToken'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/http.Error'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/http.Error'
+      summary: refreshes auth token
+      tags:
+      - auth
+  /ready:
+    get:
+      responses:
+        "200":
+          description: ""
+      summary: check system is ready
+      tags:
+      - system
+swagger: "2.0"

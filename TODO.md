@@ -1,0 +1,4 @@
+- client profile
+- email confirmation
+- minio
+- advertisment

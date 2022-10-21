@@ -1,0 +1,75 @@
+# http server configuration
+http:
+  # listens on port
+  port: ${HTTP_PORT|8090}
+  cors:
+    allowedHeaders:
+      - "*"
+    allowedOrigins:
+      - "*"
+    allowedMethods:
+      - GET
+      - POST
+      - PUT
+      - DELETE
+      - OPTIONS
+    debug: ${HTTP_CORS_DEBUG_ENABLED|false}
+  # trace requests/responses
+  trace: ${HTTP_TRACE_ENABLED|false}
+  # http server write timeout
+  write-timeout-sec: ${HTTP_WRITE_TIMEOUT_SEC|10}
+  # http read write timeout
+  read-timeout-sec: ${HTTP_READ_TIMEOUT_SEC|10}
+  # http server write buffer size
+  write-buffer-size-bytes: ${HTTP_WRITE_BUFFER_SIZE_BYTES|1024}
+  # http server read buffer size
+  read-buffer-size-bytes: ${HTTP_READ_BUFFER_SIZE_BYTES|1024}
+
+auth:
+  # access token
+  access-token:
+    # secret
+    secret: ${AUTH_ACCESS_TOKEN_SECRET|c78f90dbcbaa485db57f7b2d9c56143f}
+    # expiration period in seconds
+    expiration-period-sec: ${AUTH_ACCESS_TOKEN_EXPIRATION_SEC|9000}
+  # refresh token
+  refresh-token:
+    # secret
+    secret: ${AUTH_REFRESH_TOKEN_SECRET|c94f85dbcbaa345db57f7b2d9c38743f}
+    # expiration period in seconds
+    expiration-period-sec: ${AUTH_REFRESH_TOKEN_EXPIRATION_SEC|604800}
+
+# storage configurations
+storages:
+  # aerospike
+  aero:
+    host: ${AERO_HOST|localhost}
+    port: ${AERO_PORT|30000}
+  # pg client
+  pg:
+    # local path to migration folder
+    mig-path: ${ARROOT|}/africarealty/src/db/migrations
+    # db master config
+    master:
+      # database name
+      dbname: ${AR_DB_MASTER_NAME|africarealty}
+      # db username
+      user: africarealty
+      # db password
+      password: ${AR_DB_MASTER_PASSWORD|africarealty}
+      # db port
+      port: ${AR_DB_MASTER_PORT|25432}
+      # host for master (read-write) database
+      host: ${AR_DB_MASTER_HOST|localhost}
+
+# logging configuration
+log:
+  # level
+  level: ${AR_LOG_LEVEL|trace}
+  # output format (plain, json)
+  format: ${AR_LOG_FORMAT|plain}
+  # if true, outputs context info
+  context: ${AR_LOG_CONTEXT|true}
+  # if true, outputs running service instance info
+  service: ${AR_LOG_SERVICE|true}
+

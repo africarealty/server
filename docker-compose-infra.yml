@@ -1,0 +1,43 @@
+version: "3"
+
+services:
+
+  aerospike:
+    container_name: ar-aerospike
+    networks:
+      - ar
+    image: aerospike/aerospike-server
+    expose:
+      - 30000
+      - 30001
+      - 30002
+    ports:
+      - "30000:3000"
+      - "30001:3001"
+      - "30002:3002"
+    environment:
+      - NAMESPACE=memcache
+    volumes:
+      - /var/africarealty/docker/volumes/aerospike/data:/opt/aerospike/data
+      - /var/africarealty/docker/volumes/aerospike/etc:/opt/aerospike/etc
+
+  pg:
+    container_name: ar-pg
+    networks:
+      - ar
+    build:
+      context: ./infra/pg
+    read_only: true
+    ports:
+      - "25432:5432"
+    volumes:
+      - /var/africarealty/docker/volumes/pg/data:/var/lib/postgresql/data
+      - /etc/localtime:/etc/localtime:ro
+    environment:
+      - POSTGRES_USER=admin
+      - POSTGRES_PASSWORD=admin
+      - POSTGRES_DB=africarealty
+
+networks:
+  ar:
+    external: true
