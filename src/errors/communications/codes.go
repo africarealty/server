@@ -1,0 +1,27 @@
+package errors
+
+const (
+	ErrCodeTemplateEmpty               = "COMM-001"
+	ErrCodeEmailValidationInvalidEmail = "COMM-002"
+	ErrCodeEmailValidationEmptyEmail   = "COMM-003"
+	ErrCodeEmailStorageCreateEmailDb   = "COMM-004"
+	ErrCodeEmailStorageUpdateEmailDb   = "COMM-005"
+	ErrCodeTemplateGenerator           = "COMM-006"
+	ErrCodeTemplateIdEmpty             = "COMM-007"
+	ErrCodeTemplateTitleEmpty          = "COMM-008"
+	ErrCodeTemplateBodyEmpty           = "COMM-009"
+	ErrCodeTemplateNotFound            = "COMM-010"
+	ErrCodeStorageTemplateDbCreate     = "COMM-011"
+	ErrCodeStorageTemplateDbUpdate     = "COMM-012"
+	ErrCodeStorageTemplateDbDelete     = "COMM-013"
+	ErrCodeTemplateStorageDbSearch     = "COMM-014"
+	ErrCodeTemplateAlreadyExists       = "COMM-015"
+	ErrCodeEmailSmtpSend               = "COMM-016"
+	ErrCodeEmailValidationInvalidFrom  = "COMM-017"
+	ErrCodeTemplateStorageAeroKey      = "COMM-018"
+	ErrCodeTemplateStorageClearCache   = "COMM-019"
+	ErrCodeTemplateStorageGetCache     = "COMM-020"
+	ErrCodeTemplateStoragePutCache     = "COMM-021"
+	ErrCodeTemplateStorageGetDb        = "COMM-022"
+	ErrCodeEmailSmtpInvalidRequest     = "COMM-023"
+)

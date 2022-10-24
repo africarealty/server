@@ -14,8 +14,8 @@ type Service interface {
 	Close(ctx context.Context)
 }
 
-// StorageAdapter common interface for storage adapters
-type StorageAdapter interface {
+// Adapter common interface for storage adapters
+type Adapter interface {
 	// Init initializes adapter
 	Init(ctx context.Context, cfg interface{}) error
 	// Close closes storage

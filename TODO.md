@@ -1,4 +1,34 @@
+- user
+    - type: client, agent, rieltor
 - client profile
-- email confirmation
+    - email confirmation
+    - forget your password
+    - avatar
+    - countries codetable + flags
+    - TG subscription
+    - favorite ads
 - minio
 - advertisment
+    - adv type
+        - rent
+            - short-term
+            - long-term
+        - sale
+            - used
+            - new development
+    - location
+        - cities/towns codetable
+        - map
+    - realty type:
+        - apartment
+        - house
+        - office space
+        - commercial
+    - gallery
+    - ID (user friendly)
+    - name
+    - address
+    - description
+    -
+- tooltips 
+    

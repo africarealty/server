@@ -8,21 +8,24 @@ import (
 	"github.com/africarealty/server/src/kit/auth/impl"
 	kitHttp "github.com/africarealty/server/src/kit/http"
 	kitService "github.com/africarealty/server/src/kit/service"
-	"github.com/africarealty/server/src/repository/storage"
+	authStrg "github.com/africarealty/server/src/repository/storage/auth"
+	commStrg "github.com/africarealty/server/src/repository/storage/communications"
 	"github.com/africarealty/server/src/service"
 )
 
 type serviceImpl struct {
-	cfg            *service.Config
-	http           *kitHttp.Server
-	storageAdapter storage.Adapter
+	cfg                   *service.Config
+	http                  *kitHttp.Server
+	authStorage           authStrg.Adapter
+	communicationsStorage commStrg.Adapter
 }
 
 // New creates a new instance of the service
 func New() kitService.Service {
 	s := &serviceImpl{}
 
-	s.storageAdapter = storage.NewAdapter()
+	s.authStorage = authStrg.NewAdapter()
+	s.communicationsStorage = commStrg.NewAdapter()
 
 	return s
 }
@@ -49,9 +52,9 @@ func (s *serviceImpl) Init(ctx context.Context) error {
 
 	// create resource policy manager
 	resourcePolicyManager := impl.NewResourcePolicyManager(service.LF())
-	authorizeSession := auth.NewAuthorizeService(s.storageAdapter)
-	sessionService := impl.NewSessionsService(service.LF(), s.storageAdapter, s.storageAdapter, authorizeSession)
-	userService := auth.NewUserService(s.storageAdapter)
+	authorizeSession := auth.NewAuthorizeService(s.authStorage)
+	sessionService := impl.NewSessionsService(service.LF(), s.authStorage, s.authStorage, authorizeSession)
+	userService := auth.NewUserService(s.authStorage)
 
 	// create and set middlewares
 	mdw := kitHttp.NewMiddleware(service.LF(), sessionService, authorizeSession, resourcePolicyManager)
@@ -74,7 +77,7 @@ func (s *serviceImpl) Init(ctx context.Context) error {
 	// init services
 	sessionService.Init(s.cfg.Auth)
 
-	if err := s.storageAdapter.Init(ctx, s.cfg); err != nil {
+	if err := s.authStorage.Init(ctx, s.cfg); err != nil {
 		return err
 	}
 
@@ -90,6 +93,6 @@ func (s *serviceImpl) Start(ctx context.Context) error {
 }
 
 func (s *serviceImpl) Close(ctx context.Context) {
-	_ = s.storageAdapter.Close(ctx)
+	_ = s.authStorage.Close(ctx)
 	s.http.Close()
 }

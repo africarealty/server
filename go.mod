@@ -4,6 +4,7 @@ go 1.16
 
 require (
 	github.com/aerospike/aerospike-client-go/v6 v6.2.1
+	github.com/cbroglie/mustache v1.4.0
 	github.com/dgrijalva/jwt-go v3.2.0+incompatible
 	github.com/go-playground/locales v0.14.0
 	github.com/go-playground/universal-translator v0.18.0
@@ -14,7 +15,12 @@ require (
 	github.com/joho/godotenv v1.4.0
 	github.com/leodido/go-urn v1.2.1 // indirect
 	github.com/lib/pq v1.10.6
+	github.com/minio/minio-go/v7 v7.0.11
 	github.com/mitchellh/mapstructure v1.5.0
+	github.com/nats-io/nats-streaming-server v0.21.1 // indirect
+	github.com/nats-io/nats.go v1.10.0
+	github.com/nats-io/stan.go v0.8.3
+	github.com/olivere/elastic/v7 v7.0.22
 	github.com/patrickmn/go-cache v2.1.0+incompatible
 	github.com/pkg/errors v0.9.1
 	github.com/pressly/goose v2.7.0+incompatible
@@ -26,6 +32,7 @@ require (
 	github.com/swaggo/http-swagger v1.3.3
 	github.com/swaggo/swag v1.8.5
 	github.com/yuin/gopher-lua v0.0.0-20220504180219-658193537a64 // indirect
+	go.uber.org/atomic v1.7.0
 	go.uber.org/multierr v1.8.0
 	golang.org/x/crypto v0.0.0-20220411220226-7b82a4e95df4
 	google.golang.org/grpc v1.48.0

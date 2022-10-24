@@ -128,6 +128,9 @@ init-infra:
 	sudo mkdir -p /var/africarealty/docker/volumes/aerospike/data; \
 	sudo mkdir -p /var/africarealty/docker/volumes/aerospike/etc; \
 	sudo mkdir -p /var/africarealty/docker/volumes/pg/data; \
+	sudo mkdir -p /var/africarealty/docker/volumes/minio; \
+	sudo mkdir -p /var/africarealty/docker/volumes/es; \
+	sudo mkdir -p /var/moiservice/docker/volumes/nats; \
 	sudo chmod -R g+rwx /var/africarealty/docker/volumes; \
 	sudo chgrp -R 1000 /var/africarealty/docker/volumes; \
 	sudo ls -l /var/africarealty/docker/volumes/
@@ -135,6 +138,9 @@ init-infra:
 rm-infra:
 	@docker-compose -f ./docker-compose-infra.yml down -v; \
 	sudo rm -rfd /var/africarealty/docker/volumes/pg; \
+	sudo rm -rfd /var/africarealty/docker/volumes/minio; \
+	sudo rm -rfd /var/africarealty/docker/volumes/es; \
+	sudo rm -rfd /var/moiservice/docker/volumes/nats; \
 	sudo rm -rfd /var/africarealty/docker/volumes/aerospike
 
 run-infra:

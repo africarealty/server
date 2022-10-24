@@ -14,21 +14,34 @@ import (
 // Here are defined all types for your configuration
 // You can remove not needed types or add your own
 
-type Storages struct {
+type CfgStorages struct {
 	Aero *kitAero.Config
 	Pg   *pg.DbClusterConfig
 }
 
-type Address struct {
+type CfgAddress struct {
 	Host string
 	Port string
 }
 
+type CfgEmail struct {
+	SmtpServer     string `config:"smtp-server"`
+	SmtpServerPort string `config:"smtp-port"`
+	SmtpUser       string `config:"smtp-user"`
+	SmtpPassword   string `config:"smtp-password"`
+	SmtpFrom       string `config:"smtp-from"`
+}
+
+type CfgCommunications struct {
+	Email *CfgEmail
+}
+
 type Config struct {
-	Log      *log.Config
-	Http     *kitHttp.Config
-	Storages *Storages
-	Auth     *auth.Config
+	Log            *log.Config
+	Http           *kitHttp.Config
+	Storages       *CfgStorages
+	Auth           *auth.Config
+	Communications *CfgCommunications
 }
 
 func LoadConfig() (*Config, error) {

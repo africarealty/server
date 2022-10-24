@@ -39,6 +39,20 @@ auth:
     # expiration period in seconds
     expiration-period-sec: ${AUTH_REFRESH_TOKEN_EXPIRATION_SEC|604800}
 
+communications:
+  # email
+  email:
+    # smtp server host
+    smtp-server: ${SMTP_HOST|localhost}
+    # smtp server port
+    smtp-port: ${SMTP_PORT|1025}
+    # smtp user
+    smtp-user: ${SMTP_USERNAME|rgs@test.ru}
+    # smtp password
+    smtp-password: ${SMTP_PASSWORD|}
+    # smtp from
+    smtp-from: ${SMTP_FROM|default-from@test.mail}
+
 # storage configurations
 storages:
   # aerospike
