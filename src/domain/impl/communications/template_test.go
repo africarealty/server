@@ -1,4 +1,4 @@
-package impl
+package communications
 
 import (
 	"github.com/africarealty/server/src/domain"

@@ -8,6 +8,7 @@ import (
 	kitHttp "github.com/africarealty/server/src/kit/http"
 	"github.com/africarealty/server/src/kit/log"
 	"github.com/africarealty/server/src/service"
+	"github.com/africarealty/server/src/usecase"
 	"net/http"
 	"strings"
 )
@@ -27,17 +28,19 @@ type Controller interface {
 
 type controllerIml struct {
 	kitHttp.BaseController
+	userRegUc      usecase.UserRegistrationUseCase
 	userService    domain.UserService
 	sessionService auth.SessionsService
 }
 
-func NewController(sessionService auth.SessionsService, userService domain.UserService) Controller {
+func NewController(sessionService auth.SessionsService, userService domain.UserService, userRegUc usecase.UserRegistrationUseCase) Controller {
 	return &controllerIml{
 		BaseController: kitHttp.BaseController{
 			Logger: service.LF(),
 		},
 		sessionService: sessionService,
 		userService:    userService,
+		userRegUc:      userRegUc,
 	}
 }
 
@@ -58,8 +61,8 @@ func (c *controllerIml) Ready(w http.ResponseWriter, r *http.Request) {
 // @Summary registers a new client
 // @Accept json
 // @produce json
-// @Param regRequest body ClientRegistrationRequest true "registration request"
-// @Success 200 {object} ClientUser
+// @Param regRequest body RegistrationRequest true "registration request"
+// @Success 200 {object} User
 // @Failure 500 {object} http.Error
 // @Router /auth/registration [post]
 // @tags auth
@@ -68,19 +71,19 @@ func (c *controllerIml) Registration(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 	c.l().C(ctx).Mth("registration").Trc()
 
-	rq := &ClientRegistrationRequest{}
+	rq := &RegistrationRequest{}
 	if err := c.DecodeRequest(r, ctx, rq); err != nil {
 		c.RespondError(w, err)
 		return
 	}
 
-	user, err := c.userService.Create(ctx, c.toClientRegRequestDomain(rq))
+	user, err := c.userRegUc.Register(ctx, c.toRegRequestDomain(rq))
 	if err != nil {
 		c.RespondError(w, err)
 		return
 	}
 
-	c.RespondOK(w, c.toClientUserApi(user))
+	c.RespondOK(w, c.toUserApi(user))
 }
 
 // Login godoc
@@ -197,27 +200,27 @@ func (c *controllerIml) SetPassword(w http.ResponseWriter, r *http.Request) {
 	c.l().C(ctx).Mth("set-password").Trc()
 
 	// take userId from the currently logged session
-	rqCtx, err := context.MustRequest(ctx)
-	if err != nil {
-		c.RespondError(w, err)
-		return
-	}
-	if rqCtx.Uid == "" {
-		c.RespondError(w, errors.ErrNoUID(ctx))
-		return
-	}
-
-	rq := &SetPasswordRequest{}
-	if err := c.DecodeRequest(r, ctx, rq); err != nil {
-		c.RespondError(w, err)
-		return
-	}
-
-	err = c.userService.SetPassword(ctx, rqCtx.Uid, rq.PrevPassword, rq.NewPassword)
-	if err != nil {
-		c.RespondError(w, err)
-		return
-	}
+	//rqCtx, err := context.MustRequest(ctx)
+	//if err != nil {
+	//	c.RespondError(w, err)
+	//	return
+	//}
+	//if rqCtx.Uid == "" {
+	//	c.RespondError(w, errors.ErrNoUID(ctx))
+	//	return
+	//}
+	//
+	//rq := &SetPasswordRequest{}
+	//if err := c.DecodeRequest(r, ctx, rq); err != nil {
+	//	c.RespondError(w, err)
+	//	return
+	//}
+	//
+	//err = c.userService.SetPassword(ctx, rqCtx.Uid, rq.PrevPassword, rq.NewPassword)
+	//if err != nil {
+	//	c.RespondError(w, err)
+	//	return
+	//}
 
 	c.RespondOK(w, kitHttp.EmptyOkResponse)
 }

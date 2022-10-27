@@ -3,6 +3,7 @@ package auth
 import (
 	"github.com/africarealty/server/src/domain"
 	"github.com/africarealty/server/src/kit/auth"
+	"github.com/africarealty/server/src/usecase"
 )
 
 func (c *controllerIml) toLoginRequest(rq *LoginRequest) *auth.LoginRequest {
@@ -35,22 +36,41 @@ func (c *controllerIml) toLoginResponseApi(s *auth.Session, t *auth.SessionToken
 	}
 }
 
-func (c *controllerIml) toClientRegRequestDomain(rq *ClientRegistrationRequest) *auth.User {
-	return &auth.User{
-		Username:  rq.Email,
+func (c *controllerIml) toRegRequestDomain(rq *RegistrationRequest) *usecase.UserRegistrationRq {
+	return &usecase.UserRegistrationRq{
+		Email:     rq.Email,
 		Password:  rq.Password,
-		Type:      domain.UserTypeClient,
+		UserType:  rq.UserType,
 		FirstName: rq.FirstName,
 		LastName:  rq.LastName,
-		Groups:    []string{domain.AuthGroupClient},
 	}
 }
 
-func (c *controllerIml) toClientUserApi(usr *auth.User) *ClientUser {
-	return &ClientUser{
+func (c *controllerIml) toOwnerApi(p *domain.OwnerProfile) *OwnerProfile {
+	if p == nil {
+		return nil
+	}
+	return &OwnerProfile{
+		Avatar: p.Avatar,
+	}
+}
+
+func (c *controllerIml) toAgentApi(p *domain.AgentProfile) *AgentProfile {
+	if p == nil {
+		return nil
+	}
+	return &AgentProfile{
+		Avatar: p.Avatar,
+	}
+}
+
+func (c *controllerIml) toUserApi(usr *domain.User) *User {
+	return &User{
 		Id:        usr.Id,
 		Email:     usr.Username,
 		FirstName: usr.FirstName,
 		LastName:  usr.LastName,
+		Owner:     c.toOwnerApi(usr.Owner),
+		Agent:     c.toAgentApi(usr.Agent),
 	}
 }

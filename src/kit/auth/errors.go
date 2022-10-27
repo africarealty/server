@@ -7,18 +7,21 @@ import (
 )
 
 const (
-	ErrCodeAccessTokenCreation           = "AUTH-001"
-	ErrCodeSessionPasswordValidation     = "AUTH-002"
-	ErrCodeUserNotFound                  = "AUTH-003"
-	ErrCodeUserNotActive                 = "AUTH-004"
-	ErrCodeUserLocked                    = "AUTH-005"
-	ErrCodeSessionLoggedOut              = "AUTH-006"
-	ErrCodeSessionAuthWrongSigningMethod = "AUTH-007"
-	ErrCodeSessionAuthTokenExpired       = "AUTH-008"
-	ErrCodeSessionAuthTokenInvalid       = "AUTH-009"
-	ErrCodeSessionAuthTokenClaimsInvalid = "AUTH-010"
-	ErrCodeSessionTokenInvalid           = "AUTH-011"
-	ErrCodeSessionNoSessionFound         = "AUTH-012"
+	ErrCodeAccessTokenCreation           = "KITAUTH-001"
+	ErrCodeSessionPasswordValidation     = "KITAUTH-002"
+	ErrCodeUserNotFound                  = "KITAUTH-003"
+	ErrCodeUserNotActive                 = "KITAUTH-004"
+	ErrCodeUserLocked                    = "KITAUTH-005"
+	ErrCodeSessionLoggedOut              = "KITAUTH-006"
+	ErrCodeSessionAuthWrongSigningMethod = "KITAUTH-007"
+	ErrCodeSessionAuthTokenExpired       = "KITAUTH-008"
+	ErrCodeSessionAuthTokenInvalid       = "KITAUTH-009"
+	ErrCodeSessionAuthTokenClaimsInvalid = "KITAUTH-010"
+	ErrCodeSessionTokenInvalid           = "KITAUTH-011"
+	ErrCodeSessionNoSessionFound         = "KITAUTH-012"
+	ErrCodeAuthPwdHashGenerate           = "KITAUTH-013"
+	ErrCodeAuthPwdEmpty                  = "KITAUTH-014"
+	ErrCodeAuthPwdPolicy                 = "KITAUTH-015"
 )
 
 var (
@@ -57,5 +60,14 @@ var (
 	}
 	ErrSessionNoSessionFound = func(ctx context.Context) error {
 		return er.WithBuilder(ErrCodeSessionNoSessionFound, "no session found").C(ctx).Business().HttpSt(http.StatusUnauthorized).Err()
+	}
+	ErrAuthPwdHashGenerate = func(cause error, ctx context.Context) error {
+		return er.WrapWithBuilder(cause, ErrCodeAuthPwdHashGenerate, "").C(ctx).Err()
+	}
+	ErrAuthPwdEmpty = func(ctx context.Context) error {
+		return er.WithBuilder(ErrCodeAuthPwdEmpty, "password isn't specified").Business().C(ctx).Err()
+	}
+	ErrAuthPwdPolicy = func(ctx context.Context) error {
+		return er.WithBuilder(ErrCodeAuthPwdPolicy, "password is too simple").Business().C(ctx).Err()
 	}
 )

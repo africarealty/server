@@ -44,18 +44,26 @@ func (s *userStorageTestSuite) TearDownSuite() {
 	_ = s.adapter.Close(s.Ctx)
 }
 
-func (s *userStorageTestSuite) getUser() *auth.User {
+func (s *userStorageTestSuite) getOwnerUser() *domain.User {
 	id := kit.NewId()
 	now := kit.Now()
-	return &auth.User{
-		Id:          id,
-		Username:    id + "@test.com",
-		Password:    kit.NewRandString(),
-		Type:        domain.UserTypeClient,
-		FirstName:   "First",
-		LastName:    "Last",
-		ActivatedAt: &now,
-		Groups:      []string{domain.AuthGroupClient},
+	return &domain.User{
+		User: auth.User{
+			Id:          id,
+			Username:    id + "@test.com",
+			Password:    kit.NewRandString(),
+			Type:        domain.UserTypeClient,
+			FirstName:   "First",
+			LastName:    "Last",
+			ActivatedAt: &now,
+			Groups:      []string{domain.AuthGroupClient},
+		},
+		Owner: &domain.OwnerProfile{
+			Profile: domain.Profile{
+				Avatar: kit.NewRandString(),
+			},
+		},
+		Agent: nil,
 	}
 }
 
@@ -68,7 +76,7 @@ func TestUserSuite(t *testing.T) {
 func (s *userStorageTestSuite) Test_User_CRUD() {
 
 	// create a user
-	expected := s.getUser()
+	expected := s.getOwnerUser()
 	err := s.storage.CreateUser(s.Ctx, expected)
 	if err != nil {
 		s.Fatal(err)

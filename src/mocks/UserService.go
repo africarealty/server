@@ -5,8 +5,7 @@ package mocks
 import (
 	context "context"
 
-	auth "github.com/africarealty/server/src/kit/auth"
-
+	domain "github.com/africarealty/server/src/domain"
 	mock "github.com/stretchr/testify/mock"
 )
 
@@ -16,20 +15,20 @@ type UserService struct {
 }
 
 // Create provides a mock function with given fields: ctx, user
-func (_m *UserService) Create(ctx context.Context, user *auth.User) (*auth.User, error) {
+func (_m *UserService) Create(ctx context.Context, user *domain.User) (*domain.User, error) {
 	ret := _m.Called(ctx, user)
 
-	var r0 *auth.User
-	if rf, ok := ret.Get(0).(func(context.Context, *auth.User) *auth.User); ok {
+	var r0 *domain.User
+	if rf, ok := ret.Get(0).(func(context.Context, *domain.User) *domain.User); ok {
 		r0 = rf(ctx, user)
 	} else {
 		if ret.Get(0) != nil {
-			r0 = ret.Get(0).(*auth.User)
+			r0 = ret.Get(0).(*domain.User)
 		}
 	}
 
 	var r1 error
-	if rf, ok := ret.Get(1).(func(context.Context, *auth.User) error); ok {
+	if rf, ok := ret.Get(1).(func(context.Context, *domain.User) error); ok {
 		r1 = rf(ctx, user)
 	} else {
 		r1 = ret.Error(1)
@@ -39,15 +38,15 @@ func (_m *UserService) Create(ctx context.Context, user *auth.User) (*auth.User,
 }
 
 // Get provides a mock function with given fields: ctx, userId
-func (_m *UserService) Get(ctx context.Context, userId string) (*auth.User, error) {
+func (_m *UserService) Get(ctx context.Context, userId string) (*domain.User, error) {
 	ret := _m.Called(ctx, userId)
 
-	var r0 *auth.User
-	if rf, ok := ret.Get(0).(func(context.Context, string) *auth.User); ok {
+	var r0 *domain.User
+	if rf, ok := ret.Get(0).(func(context.Context, string) *domain.User); ok {
 		r0 = rf(ctx, userId)
 	} else {
 		if ret.Get(0) != nil {
-			r0 = ret.Get(0).(*auth.User)
+			r0 = ret.Get(0).(*domain.User)
 		}
 	}
 
@@ -62,15 +61,15 @@ func (_m *UserService) Get(ctx context.Context, userId string) (*auth.User, erro
 }
 
 // GetByEmail provides a mock function with given fields: ctx, email
-func (_m *UserService) GetByEmail(ctx context.Context, email string) (*auth.User, error) {
+func (_m *UserService) GetByEmail(ctx context.Context, email string) (*domain.User, error) {
 	ret := _m.Called(ctx, email)
 
-	var r0 *auth.User
-	if rf, ok := ret.Get(0).(func(context.Context, string) *auth.User); ok {
+	var r0 *domain.User
+	if rf, ok := ret.Get(0).(func(context.Context, string) *domain.User); ok {
 		r0 = rf(ctx, email)
 	} else {
 		if ret.Get(0) != nil {
-			r0 = ret.Get(0).(*auth.User)
+			r0 = ret.Get(0).(*domain.User)
 		}
 	}
 
@@ -85,15 +84,15 @@ func (_m *UserService) GetByEmail(ctx context.Context, email string) (*auth.User
 }
 
 // GetByIds provides a mock function with given fields: ctx, userIds
-func (_m *UserService) GetByIds(ctx context.Context, userIds []string) ([]*auth.User, error) {
+func (_m *UserService) GetByIds(ctx context.Context, userIds []string) ([]*domain.User, error) {
 	ret := _m.Called(ctx, userIds)
 
-	var r0 []*auth.User
-	if rf, ok := ret.Get(0).(func(context.Context, []string) []*auth.User); ok {
+	var r0 []*domain.User
+	if rf, ok := ret.Get(0).(func(context.Context, []string) []*domain.User); ok {
 		r0 = rf(ctx, userIds)
 	} else {
 		if ret.Get(0) != nil {
-			r0 = ret.Get(0).([]*auth.User)
+			r0 = ret.Get(0).([]*domain.User)
 		}
 	}
 
@@ -107,13 +106,27 @@ func (_m *UserService) GetByIds(ctx context.Context, userIds []string) ([]*auth.
 	return r0, r1
 }
 
-// SetPassword provides a mock function with given fields: ctx, userId, prevPassword, newPassword
-func (_m *UserService) SetPassword(ctx context.Context, userId string, prevPassword string, newPassword string) error {
-	ret := _m.Called(ctx, userId, prevPassword, newPassword)
+// SetActivationToken provides a mock function with given fields: ctx, userId, token, ttl
+func (_m *UserService) SetActivationToken(ctx context.Context, userId string, token string, ttl uint32) error {
+	ret := _m.Called(ctx, userId, token, ttl)
 
 	var r0 error
-	if rf, ok := ret.Get(0).(func(context.Context, string, string, string) error); ok {
-		r0 = rf(ctx, userId, prevPassword, newPassword)
+	if rf, ok := ret.Get(0).(func(context.Context, string, string, uint32) error); ok {
+		r0 = rf(ctx, userId, token, ttl)
+	} else {
+		r0 = ret.Error(0)
+	}
+
+	return r0
+}
+
+// SetPassword provides a mock function with given fields: ctx, userId, newPasswordHash
+func (_m *UserService) SetPassword(ctx context.Context, userId string, newPasswordHash string) error {
+	ret := _m.Called(ctx, userId, newPasswordHash)
+
+	var r0 error
+	if rf, ok := ret.Get(0).(func(context.Context, string, string) error); ok {
+		r0 = rf(ctx, userId, newPasswordHash)
 	} else {
 		r0 = ret.Error(0)
 	}

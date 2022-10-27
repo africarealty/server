@@ -2,22 +2,29 @@ package bootstrap
 
 import (
 	"context"
+	"github.com/africarealty/server/src/domain"
 	"github.com/africarealty/server/src/domain/impl/auth"
+	"github.com/africarealty/server/src/domain/impl/communications"
+	"github.com/africarealty/server/src/domain/impl/filestore"
 	httpAuth "github.com/africarealty/server/src/http/auth"
 	"github.com/africarealty/server/src/http/system"
 	"github.com/africarealty/server/src/kit/auth/impl"
 	kitHttp "github.com/africarealty/server/src/kit/http"
 	kitService "github.com/africarealty/server/src/kit/service"
+	"github.com/africarealty/server/src/repository/adapters/smtp"
 	authStrg "github.com/africarealty/server/src/repository/storage/auth"
 	commStrg "github.com/africarealty/server/src/repository/storage/communications"
 	"github.com/africarealty/server/src/service"
+	authUc "github.com/africarealty/server/src/usecase/impl/auth"
 )
 
 type serviceImpl struct {
 	cfg                   *service.Config
 	http                  *kitHttp.Server
 	authStorage           authStrg.Adapter
-	communicationsStorage commStrg.Adapter
+	communicationsAdapter commStrg.Adapter
+	smtpAdapter           smtp.Adapter
+	emailService          domain.EmailService
 }
 
 // New creates a new instance of the service
@@ -25,7 +32,11 @@ func New() kitService.Service {
 	s := &serviceImpl{}
 
 	s.authStorage = authStrg.NewAdapter()
-	s.communicationsStorage = commStrg.NewAdapter()
+	s.communicationsAdapter = commStrg.NewAdapter()
+	templateStorage := communications.NewTemplateGenerator(s.communicationsAdapter.GetTemplateStorage())
+	fileStore := filestore.NewStoreService(nil)
+	s.smtpAdapter = smtp.NewAdapter()
+	s.emailService = communications.NewEmailService(templateStorage, nil, fileStore, s.smtpAdapter)
 
 	return s
 }
@@ -55,6 +66,7 @@ func (s *serviceImpl) Init(ctx context.Context) error {
 	authorizeSession := auth.NewAuthorizeService(s.authStorage)
 	sessionService := impl.NewSessionsService(service.LF(), s.authStorage, s.authStorage, authorizeSession)
 	userService := auth.NewUserService(s.authStorage)
+	userRegUc := authUc.NewUserRegistrationImpl(userService, s.emailService, impl.NewPasswordService(service.LF()))
 
 	// create and set middlewares
 	mdw := kitHttp.NewMiddleware(service.LF(), sessionService, authorizeSession, resourcePolicyManager)
@@ -65,7 +77,7 @@ func (s *serviceImpl) Init(ctx context.Context) error {
 
 	// setup routes & controllers
 	routers := []kitHttp.RouteSetter{
-		httpAuth.NewRouter(httpAuth.NewController(sessionService, userService), routeBuilder),
+		httpAuth.NewRouter(httpAuth.NewController(sessionService, userService, userRegUc), routeBuilder),
 		system.NewRouter(system.NewController(), routeBuilder),
 	}
 	for _, r := range routers {
@@ -75,9 +87,11 @@ func (s *serviceImpl) Init(ctx context.Context) error {
 	}
 
 	// init services
-	sessionService.Init(s.cfg.Auth)
-
-	if err := s.authStorage.Init(ctx, s.cfg); err != nil {
+	sessionService.Init(&s.cfg.Auth.Config)
+	if err := s.authStorage.Init(ctx, s.cfg.Auth); err != nil {
+		return err
+	}
+	if err := s.smtpAdapter.Init(ctx, s.cfg.Communications.Email); err != nil {
 		return err
 	}
 
@@ -95,4 +109,6 @@ func (s *serviceImpl) Start(ctx context.Context) error {
 func (s *serviceImpl) Close(ctx context.Context) {
 	_ = s.authStorage.Close(ctx)
 	s.http.Close()
+	_ = s.authStorage.Close(ctx)
+	_ = s.smtpAdapter.Close(ctx)
 }

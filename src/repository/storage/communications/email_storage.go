@@ -37,22 +37,20 @@ func (e *EmailStorageImpl) l() log.CLogger {
 	return service.L().Cmp("email-storage")
 }
 
-func (e *EmailStorageImpl) UpdateEmail(ctx context.Context, requests ...*domain.Email) error {
+func (e *EmailStorageImpl) UpdateEmail(ctx context.Context, request *domain.Email) error {
 	e.l().C(ctx).Mth("update").Dbg()
 	t := kit.Now()
-	for _, d := range requests {
-		dto := e.toEmailDto(d)
-		dto.UpdatedAt = &t
-		result := e.pg.Instance.Exec(`
+	dto := e.toEmailDto(request)
+	dto.UpdatedAt = &t
+	result := e.pg.Instance.Exec(`
 			update emails set
 				send_status = ?,
 				error_desc = ?,
 				updated_at = ?
 			where id = ?::uuid 
 			`, dto.SendStatus, dto.ErrorDescription, dto.UpdatedAt, dto.Id)
-		if result.Error != nil {
-			return errors.ErrEmailStorageUpdateEmailDb(result.Error, ctx)
-		}
+	if result.Error != nil {
+		return errors.ErrEmailStorageUpdateEmailDb(result.Error, ctx)
 	}
 	return nil
 }

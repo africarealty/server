@@ -36,11 +36,22 @@ type CfgCommunications struct {
 	Email *CfgEmail
 }
 
+type CfgAuth struct {
+	auth.Config
+	Password struct {
+		MinLen uint `config:"min-len"`
+	}
+	Activation struct {
+		Url string
+		Ttl uint32
+	}
+}
+
 type Config struct {
 	Log            *log.Config
 	Http           *kitHttp.Config
 	Storages       *CfgStorages
-	Auth           *auth.Config
+	Auth           *CfgAuth
 	Communications *CfgCommunications
 }
 

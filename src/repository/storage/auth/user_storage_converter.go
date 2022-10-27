@@ -3,11 +3,12 @@ package auth
 import (
 	"encoding/json"
 	aero "github.com/aerospike/aerospike-client-go/v6"
+	"github.com/africarealty/server/src/domain"
 	"github.com/africarealty/server/src/kit/auth"
 	"github.com/africarealty/server/src/kit/storages/pg"
 )
 
-func (s *UserStorageImpl) toUserDto(u *auth.User) *user {
+func (s *UserStorageImpl) toUserDto(u *domain.User) *user {
 	if u == nil {
 		return nil
 	}
@@ -24,6 +25,8 @@ func (s *UserStorageImpl) toUserDto(u *auth.User) *user {
 		LastName:  u.LastName,
 		Groups:    u.Groups,
 		Roles:     u.Roles,
+		Owner:     u.Owner,
+		Agent:     u.Agent,
 	}
 	var detailsBytes []byte
 	detailsBytes, _ = json.Marshal(det)
@@ -31,17 +34,17 @@ func (s *UserStorageImpl) toUserDto(u *auth.User) *user {
 	return dto
 }
 
-func (s *UserStorageImpl) toUserCacheDomain(rec *aero.Record) *auth.User {
+func (s *UserStorageImpl) toUserCacheDomain(rec *aero.Record) *domain.User {
 	if rec == nil {
 		return nil
 	}
 	body := rec.Bins["user"].(string)
-	user := &auth.User{}
+	user := &domain.User{}
 	_ = json.Unmarshal([]byte(body), user)
 	return user
 }
 
-func (s *UserStorageImpl) toUserCache(user *auth.User) aero.BinMap {
+func (s *UserStorageImpl) toUserCache(user *domain.User) aero.BinMap {
 	usrBytes, _ := json.Marshal(user)
 	return aero.BinMap{
 		"username": user.Username,
@@ -49,28 +52,32 @@ func (s *UserStorageImpl) toUserCache(user *auth.User) aero.BinMap {
 	}
 }
 
-func (s *UserStorageImpl) toUserDomain(dto *user) *auth.User {
+func (s *UserStorageImpl) toUserDomain(dto *user) *domain.User {
 	if dto == nil {
 		return nil
 	}
 	det := &userDetails{}
 	_ = json.Unmarshal([]byte(dto.Details), det)
-	return &auth.User{
-		Id:          dto.Id,
-		Username:    dto.Username,
-		Password:    pg.NullToString(dto.Password),
-		Type:        dto.Type,
-		FirstName:   det.FirstName,
-		LastName:    det.LastName,
-		ActivatedAt: dto.ActivatedAt,
-		LockedAt:    dto.LockedAt,
-		Groups:      det.Groups,
-		Roles:       det.Roles,
+	return &domain.User{
+		User: auth.User{
+			Id:          dto.Id,
+			Username:    dto.Username,
+			Password:    pg.NullToString(dto.Password),
+			Type:        dto.Type,
+			FirstName:   det.FirstName,
+			LastName:    det.LastName,
+			ActivatedAt: dto.ActivatedAt,
+			LockedAt:    dto.LockedAt,
+			Groups:      det.Groups,
+			Roles:       det.Roles,
+		},
+		Owner: det.Owner,
+		Agent: det.Agent,
 	}
 }
 
-func (s *UserStorageImpl) toUsersDomain(dtos []*user) []*auth.User {
-	var res []*auth.User
+func (s *UserStorageImpl) toUsersDomain(dtos []*user) []*domain.User {
+	var res []*domain.User
 	for _, d := range dtos {
 		res = append(res, s.toUserDomain(d))
 	}

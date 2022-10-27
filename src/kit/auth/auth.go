@@ -139,3 +139,18 @@ type ResourcePolicyManager interface {
 	// GetRequestedResources resolves policies and retrieves accumulated resources requested to be authorized
 	GetRequestedResources(ctx context.Context, routeId string, r *http.Request) ([]*AuthorizationResource, error)
 }
+
+// PasswordPolicy specifies password policy
+type PasswordPolicy struct {
+	MinLen *uint // MinLen min password length
+}
+
+// PasswordService manages passwords
+type PasswordService interface {
+	// GetHash returns hashed password
+	GetHash(ctx context.Context, password string) (string, error)
+	// CheckPolicy checks password policy
+	CheckPolicy(ctx context.Context, password string, policy *PasswordPolicy) (bool, error)
+	// Verify verifies password against hash
+	Verify(ctx context.Context, password, hash string) (bool, error)
+}

@@ -7,14 +7,8 @@ import (
 )
 
 var (
-	ErrUserPasswordHashGenerate = func(cause error, ctx context.Context) error {
-		return er.WrapWithBuilder(cause, ErrCodeUserPasswordHashGenerate, "").C(ctx).Err()
-	}
-	ErrAuthPwdEmpty = func(ctx context.Context) error {
-		return er.WithBuilder(ErrCodeAuthPwdEmpty, "password isn't specified").Business().C(ctx).Err()
-	}
-	ErrAuthPwdPolicy = func(ctx context.Context) error {
-		return er.WithBuilder(ErrCodeAuthPwdPolicy, "password is too simple").Business().C(ctx).Err()
+	ErrUserIdEmpty = func(ctx context.Context) error {
+		return er.WithBuilder(ErrCodeUserIdEmpty, "email empty").Business().C(ctx).Err()
 	}
 	ErrUserEmailEmpty = func(ctx context.Context) error {
 		return er.WithBuilder(ErrCodeUserEmailEmpty, "email empty").Business().C(ctx).Err()
@@ -51,6 +45,12 @@ var (
 	}
 	ErrUserStorageAeroKey = func(cause error, ctx context.Context) error {
 		return er.WrapWithBuilder(cause, ErrCodeUserStorageAeroKey, "").C(ctx).Err()
+	}
+	ErrUserStorageSetToken = func(cause error, ctx context.Context) error {
+		return er.WrapWithBuilder(cause, ErrCodeUserStorageSetToken, "").C(ctx).Err()
+	}
+	ErrUserStorageGetToken = func(cause error, ctx context.Context) error {
+		return er.WrapWithBuilder(cause, ErrCodeUserStorageGetToken, "").C(ctx).Err()
 	}
 	ErrUserStorageGetCache = func(cause error, ctx context.Context) error {
 		return er.WrapWithBuilder(cause, ErrCodeUserStorageGetCache, "").C(ctx).Err()
@@ -126,5 +126,11 @@ var (
 	}
 	ErrNotAllowed = func(ctx context.Context) error {
 		return er.WithBuilder(ErrCodeNotAllowed, "operation isn't allowed").Business().C(ctx).HttpSt(http.StatusForbidden).Err()
+	}
+	ErrUserRegEmptyRq = func(ctx context.Context) error {
+		return er.WithBuilder(ErrCodeUserRegEmptyRq, "empty request").Business().C(ctx).HttpSt(http.StatusBadRequest).Err()
+	}
+	ErrUserRegPasswordTooSimple = func(ctx context.Context) error {
+		return er.WithBuilder(ErrCodeUserRegPasswordTooSimple, "password is too simple").Business().C(ctx).HttpSt(http.StatusBadRequest).Err()
 	}
 )

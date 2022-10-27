@@ -20,30 +20,59 @@ const (
 	AuthResArbitrageChainsAll = "arbitrage.chains.all"
 )
 
+// Profile common profile attrs
+type Profile struct {
+	Avatar string // Avatar avatar link
+}
+
+// OwnerProfile owner profile
+type OwnerProfile struct {
+	Profile
+}
+
+// AgentProfile agent profile
+type AgentProfile struct {
+	Profile
+}
+
+type User struct {
+	auth.User               // basic profile attributes
+	Owner     *OwnerProfile // Owner owner profile
+	Agent     *AgentProfile // Agent agent profile
+}
+
 type UserService interface {
 	// Create creates a new user
-	Create(ctx context.Context, user *auth.User) (*auth.User, error)
+	Create(ctx context.Context, user *User) (*User, error)
 	// GetByEmail gets user by email
-	GetByEmail(ctx context.Context, email string) (*auth.User, error)
+	GetByEmail(ctx context.Context, email string) (*User, error)
 	// Get gets user by id
-	Get(ctx context.Context, userId string) (*auth.User, error)
+	Get(ctx context.Context, userId string) (*User, error)
 	// GetByIds retrieves users by IDs
-	GetByIds(ctx context.Context, userIds []string) ([]*auth.User, error)
+	GetByIds(ctx context.Context, userIds []string) ([]*User, error)
 	// SetPassword updates user password
-	SetPassword(ctx context.Context, userId, prevPassword, newPassword string) error
+	SetPassword(ctx context.Context, userId, newPasswordHash string) error
+	// SetActivationToken sets token for the given user with the given ttl
+	SetActivationToken(ctx context.Context, userId, token string, ttl uint32) error
 }
 
 type UserStorage interface {
 	// CreateUser creates a new user
-	CreateUser(ctx context.Context, u *auth.User) error
+	CreateUser(ctx context.Context, u *User) error
 	// UpdateUser updates an user
-	UpdateUser(ctx context.Context, u *auth.User) error
+	UpdateUser(ctx context.Context, u *User) error
 	// GetByEmail retrieves an user by email
-	GetByUsername(ctx context.Context, email string) (*auth.User, error)
+	GetByEmail(ctx context.Context, email string) (*User, error)
 	// GetUser retrieves a user by id
-	GetUser(ctx context.Context, userId string) (*auth.User, error)
+	GetUser(ctx context.Context, userId string) (*User, error)
 	// GetByIds retrieves users by IDs
-	GetUserByIds(ctx context.Context, userIds []string) ([]*auth.User, error)
+	GetUserByIds(ctx context.Context, userIds []string) ([]*User, error)
 	// DeleteUser deletes a user
-	DeleteUser(ctx context.Context, u *auth.User) error
+	DeleteUser(ctx context.Context, u *User) error
+	// SetActivationToken sets token for the given user with the given ttl
+	SetActivationToken(ctx context.Context, userId, token string, ttl uint32) error
+	// GetActivationToken retrieves activation token
+	GetActivationToken(ctx context.Context, userId string) (string, error)
+	// GetByUsername retrieves an user by username
+	GetByUsername(ctx context.Context, username string) (*auth.User, error)
 }

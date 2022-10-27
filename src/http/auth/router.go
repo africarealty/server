@@ -19,7 +19,6 @@ func NewRouter(c Controller, routeBuilder *http.RouteBuilder) http.RouteSetter {
 
 func (r *Router) Set() error {
 	return r.routeBuilder.Build(
-
 		// authentication & authorization
 		http.R("/api/auth/login", r.ctrl.Login).POST().NoAuth(),
 		http.R("/api/auth/token/refresh", r.ctrl.TokenRefresh).POST().NoAuth(),

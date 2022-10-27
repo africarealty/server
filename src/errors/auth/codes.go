@@ -1,9 +1,7 @@
 package errors
 
 const (
-	ErrCodeAuthPwdEmpty                        = "AUTH-001"
-	ErrCodeAuthPwdPolicy                       = "AUTH-002"
-	ErrCodeUserPasswordHashGenerate            = "AUTH-003"
+	ErrCodeUserIdEmpty                         = "AUTH-001"
 	ErrCodeUserEmailEmpty                      = "AUTH-004"
 	ErrCodeUserNoValidEmail                    = "AUTH-005"
 	ErrCodeUserNameNotUnique                   = "AUTH-006"
@@ -41,4 +39,8 @@ const (
 	ErrCodeUserInvalidPassword                 = "AUTH-038"
 	ErrCodeNoUID                               = "AUTH-039"
 	ErrCodeNotAllowed                          = "AUTH-040"
+	ErrCodeUserStorageSetToken                 = "AUTH-041"
+	ErrCodeUserStorageGetToken                 = "AUTH-042"
+	ErrCodeUserRegEmptyRq                      = "AUTH-043"
+	ErrCodeUserRegPasswordTooSimple            = "AUTH-044"
 )

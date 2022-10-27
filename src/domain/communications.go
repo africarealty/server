@@ -13,6 +13,8 @@ const (
 	EmailRqStatusSmtpError = "smtp-error"
 
 	EmailRequestTopic = "email.request"
+
+	EmailTemplateUserActivation = "auth.registration-activation"
 )
 
 type Template struct {
@@ -126,5 +128,5 @@ type EmailStorage interface {
 	// CreateEmail creates SMS request to db
 	CreateEmail(ctx context.Context, requests *Email) error
 	// UpdateEmail updates SMS request to db
-	UpdateEmail(ctx context.Context, requests ...*Email) error
+	UpdateEmail(ctx context.Context, requests *Email) error
 }

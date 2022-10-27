@@ -38,6 +38,16 @@ auth:
     secret: ${AUTH_REFRESH_TOKEN_SECRET|c94f85dbcbaa345db57f7b2d9c38743f}
     # expiration period in seconds
     expiration-period-sec: ${AUTH_REFRESH_TOKEN_EXPIRATION_SEC|604800}
+  # password policy
+  password:
+    # minimum len
+    min-len: 6
+  # user activation by email
+  activation:
+    # activation url
+    url: ${AUTH_USER_ACTIVATION_URL|http://localhost:8090/api/auth/users/activation}
+    # activation link live time
+    ttl: ${AUTH_USER_ACTIVATION_TTL|3600}
 
 communications:
   # email

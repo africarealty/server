@@ -4,6 +4,7 @@ import (
 	"context"
 	aero "github.com/aerospike/aerospike-client-go/v6"
 	"github.com/aerospike/aerospike-client-go/v6/types"
+	"github.com/africarealty/server/src/domain"
 	"github.com/africarealty/server/src/errors/auth"
 	"github.com/africarealty/server/src/kit/auth"
 	"github.com/africarealty/server/src/kit/goroutine"
@@ -16,14 +17,17 @@ import (
 )
 
 const (
-	AeroSetUserCache = "user_cache"
+	AeroSetUserCache       = "user_cache"
+	AeroSetActivationToken = "user_activation_token"
 )
 
 type userDetails struct {
-	FirstName string   `json:"firstName,omitempty"`
-	LastName  string   `json:"lastName,omitempty"`
-	Groups    []string `json:"groups,omitempty"`
-	Roles     []string `json:"roles,omitempty"`
+	FirstName string               `json:"firstName,omitempty"`
+	LastName  string               `json:"lastName,omitempty"`
+	Groups    []string             `json:"groups,omitempty"`
+	Roles     []string             `json:"roles,omitempty"`
+	Owner     *domain.OwnerProfile `json:"owner,omitempty"`
+	Agent     *domain.AgentProfile `json:"agent,omitempty"`
 }
 
 type user struct {
@@ -83,7 +87,7 @@ func (s *UserStorageImpl) clearCache(ctx context.Context, userId string) error {
 	return nil
 }
 
-func (s *UserStorageImpl) getFromCacheById(ctx context.Context, userId string) (*auth.User, error) {
+func (s *UserStorageImpl) getFromCacheById(ctx context.Context, userId string) (*domain.User, error) {
 	s.l().Mth("get-cache").C(ctx).F(log.FF{"userId": userId}).Trc()
 	key, err := aero.NewKey(storage.AeroNsCache, AeroSetUserCache, userId)
 	if err != nil {
@@ -98,7 +102,7 @@ func (s *UserStorageImpl) getFromCacheById(ctx context.Context, userId string) (
 	return s.toUserCacheDomain(rec), nil
 }
 
-func (s *UserStorageImpl) getFromCacheByUsername(ctx context.Context, username string) (*auth.User, error) {
+func (s *UserStorageImpl) getFromCacheByUsername(ctx context.Context, username string) (*domain.User, error) {
 	s.l().Mth("get-cache").C(ctx).F(log.FF{"username": username}).Trc()
 	queryPolicy := aero.NewQueryPolicy()
 	queryPolicy.SendKey = true
@@ -124,7 +128,7 @@ func (s *UserStorageImpl) getFromCacheByUsername(ctx context.Context, username s
 	}
 }
 
-func (s *UserStorageImpl) setCache(ctx context.Context, user *auth.User) error {
+func (s *UserStorageImpl) setCache(ctx context.Context, user *domain.User) error {
 	s.l().Mth("set-cache").C(ctx).F(log.FF{"userId": user.Id}).Trc()
 	key, err := aero.NewKey(storage.AeroNsCache, AeroSetUserCache, user.Id)
 	if err != nil {
@@ -139,7 +143,7 @@ func (s *UserStorageImpl) setCache(ctx context.Context, user *auth.User) error {
 	return nil
 }
 
-func (s *UserStorageImpl) CreateUser(ctx context.Context, user *auth.User) error {
+func (s *UserStorageImpl) CreateUser(ctx context.Context, user *domain.User) error {
 	s.l().Mth("create").C(ctx).F(log.FF{"userId": user.Id}).Trc()
 	dto := s.toUserDto(user)
 	result := s.pg.Instance.Create(dto)
@@ -149,7 +153,7 @@ func (s *UserStorageImpl) CreateUser(ctx context.Context, user *auth.User) error
 	return nil
 }
 
-func (s *UserStorageImpl) UpdateUser(ctx context.Context, user *auth.User) error {
+func (s *UserStorageImpl) UpdateUser(ctx context.Context, user *domain.User) error {
 	l := s.l().Mth("update").C(ctx).F(log.FF{"userId": user.Id}).Trc()
 	eg := goroutine.NewGroup(ctx).WithLogger(l)
 	// save to DB
@@ -168,13 +172,13 @@ func (s *UserStorageImpl) UpdateUser(ctx context.Context, user *auth.User) error
 	return eg.Wait()
 }
 
-func (s *UserStorageImpl) GetByUsername(ctx context.Context, username string) (*auth.User, error) {
-	l := s.l().Mth("get").C(ctx).F(log.FF{"username": username}).Trc()
-	if username == "" {
+func (s *UserStorageImpl) GetByEmail(ctx context.Context, email string) (*domain.User, error) {
+	l := s.l().Mth("get-email").C(ctx).F(log.FF{"email": email}).Trc()
+	if email == "" {
 		return nil, nil
 	}
 	// check cache first
-	usr, err := s.getFromCacheByUsername(ctx, username)
+	usr, err := s.getFromCacheByUsername(ctx, email)
 	if err != nil {
 		return nil, err
 	}
@@ -184,7 +188,7 @@ func (s *UserStorageImpl) GetByUsername(ctx context.Context, username string) (*
 	}
 	// get from db
 	dto := &user{}
-	res := s.pg.Instance.Limit(1).Where("username = ?", username).Find(&dto)
+	res := s.pg.Instance.Limit(1).Where("username = ?", email).Find(&dto)
 	if res.Error != nil {
 		return nil, errors.ErrUserStorageGetDb(res.Error, ctx)
 	}
@@ -200,7 +204,15 @@ func (s *UserStorageImpl) GetByUsername(ctx context.Context, username string) (*
 	return usr, nil
 }
 
-func (s *UserStorageImpl) GetUser(ctx context.Context, userId string) (*auth.User, error) {
+func (s *UserStorageImpl) GetByUsername(ctx context.Context, username string) (*auth.User, error) {
+	user, err := s.GetByEmail(ctx, username)
+	if err != nil {
+		return nil, err
+	}
+	return &user.User, nil
+}
+
+func (s *UserStorageImpl) GetUser(ctx context.Context, userId string) (*domain.User, error) {
 	l := s.l().Mth("get").C(ctx).F(log.FF{"userId": userId}).Trc()
 	if userId == "" {
 		return nil, nil
@@ -232,10 +244,10 @@ func (s *UserStorageImpl) GetUser(ctx context.Context, userId string) (*auth.Use
 	return usr, nil
 }
 
-func (s *UserStorageImpl) GetUserByIds(ctx context.Context, userIds []string) ([]*auth.User, error) {
+func (s *UserStorageImpl) GetUserByIds(ctx context.Context, userIds []string) ([]*domain.User, error) {
 	s.l().Mth("get-ids").C(ctx).Trc()
 	if len(userIds) == 0 {
-		return []*auth.User{}, nil
+		return []*domain.User{}, nil
 	}
 	var users []*user
 	if err := s.pg.Instance.Find(&users, userIds).Error; err != nil {
@@ -244,7 +256,7 @@ func (s *UserStorageImpl) GetUserByIds(ctx context.Context, userIds []string) ([
 	return s.toUsersDomain(users), nil
 }
 
-func (s *UserStorageImpl) DeleteUser(ctx context.Context, u *auth.User) error {
+func (s *UserStorageImpl) DeleteUser(ctx context.Context, u *domain.User) error {
 	l := s.l().C(ctx).Mth("delete").F(log.FF{"userId": u.Id}).Dbg()
 	eg := goroutine.NewGroup(ctx).WithLogger(l)
 	eg.Go(func() error {
@@ -259,4 +271,37 @@ func (s *UserStorageImpl) DeleteUser(ctx context.Context, u *auth.User) error {
 		return s.clearCache(ctx, u.Id)
 	})
 	return eg.Wait()
+}
+
+func (s *UserStorageImpl) SetActivationToken(ctx context.Context, userId, token string, ttl uint32) error {
+	s.l().Mth("set-activation-token").C(ctx).F(log.FF{"userId": userId}).Trc()
+	key, err := aero.NewKey(storage.AeroNsCache, AeroSetActivationToken, userId)
+	if err != nil {
+		return errors.ErrUserStorageAeroKey(err, ctx)
+	}
+	writePolicy := aero.NewWritePolicy(0, ttl)
+	writePolicy.SendKey = true
+	err = s.aero.Instance().Put(writePolicy, key, aero.BinMap{"token": token})
+	if err != nil {
+		return errors.ErrUserStorageSetToken(err, ctx)
+	}
+	return nil
+}
+
+func (s *UserStorageImpl) GetActivationToken(ctx context.Context, userId string) (string, error) {
+	s.l().Mth("get-activation-token").C(ctx).F(log.FF{"userId": userId}).Trc()
+	key, err := aero.NewKey(storage.AeroNsCache, AeroSetActivationToken, userId)
+	if err != nil {
+		return "", errors.ErrUserStorageAeroKey(err, ctx)
+	}
+	policy := aero.NewPolicy()
+	policy.SendKey = true
+	rec, err := s.aero.Instance().Get(policy, key)
+	if err != nil && !err.Matches(types.KEY_NOT_FOUND_ERROR) {
+		return "", errors.ErrUserStorageGetToken(err, ctx)
+	}
+	if rec == nil {
+		return "", nil
+	}
+	return rec.Bins["token"].(string), nil
 }
