@@ -42,8 +42,8 @@ services:
     container_name: ar-mailhog
     image: "mailhog/mailhog"
     ports:
-      - "10025:1025"
-      - "80025:8025"
+      - "11025:1025"
+      - "18025:8025"
     networks:
       - ar
 
@@ -67,56 +67,51 @@ services:
       timeout: 20s
       retries: 3
 
-  elasticsearch:
-    container_name: ar-es
-    networks:
-      - ar
-    image: elasticsearch:7.10.1
-    ports:
-      - "19200:9200"
-    user: "1000:1000"
-    environment:
-      - discovery.type=single-node
-      - cluster.name=elasticsearch
-      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
-    volumes:
-      - /var/africarealty/docker/volumes/es:/usr/share/elasticsearch/data
-
-  elasticHQ:
-    container_name: ar-eshq
-    networks:
-      - ar
-    ports:
-      - "15000:5000"
-    image: elastichq/elasticsearch-hq
-    environment:
-      - HQ_DEFAULT_URL=http://elasticsearch:19200
-    depends_on:
-      - elasticsearch
+#  elasticsearch:
+#    container_name: ar-es
+#    networks:
+#      - ar
+#    image: elasticsearch:7.10.1
+#    ports:
+#      - "19200:9200"
+#    user: "1000:1000"
+#    environment:
+#      - discovery.type=single-node
+#      - cluster.name=elasticsearch
+#      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+#    volumes:
+#      - /var/africarealty/docker/volumes/es:/usr/share/elasticsearch/data
+#
+#  elasticHQ:
+#    container_name: ar-eshq
+#    networks:
+#      - ar
+#    ports:
+#      - "15000:5000"
+#    image: elastichq/elasticsearch-hq
+#    environment:
+#      - HQ_DEFAULT_URL=http://elasticsearch:19200
+#    depends_on:
+#      - elasticsearch
 
   nats:
-    container_name: ar-stan
+    container_name: ar-nats
     networks:
       - ar
     ports:
       - "14222:4222"
       - "18222:8222"
-    image: nats-streaming
+    image: nats:latest
     expose:
       - 14222
       - 18222
     command:
       - "--debug"
-      - "--store"
-      - file
-      - "--dir"
-      - /data/msg
-      - "--http_port"
-      - "8222"
-      - "--port"
-      - "4222"
+      - "--name=nats-ar"
+      - "--jetstream"
+      - "--store_dir=/data"
     volumes:
-      - /var/africarealty/docker/volumes/nats/data:/data
+      - /var/africarealty/docker/volumes/nats:/data
 
 networks:
   ar:

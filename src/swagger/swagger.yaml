@@ -1,33 +1,9 @@
 basePath: /api
 definitions:
-  auth.ClientRegistrationRequest:
+  auth.AgentProfile:
     properties:
-      email:
-        description: Email - user's email
-        type: string
-      firstName:
-        description: FirstName - user's first name
-        type: string
-      lastName:
-        description: LastName - user's last name
-        type: string
-      password:
-        description: Password - password
-        type: string
-    type: object
-  auth.ClientUser:
-    properties:
-      email:
-        description: Email - email
-        type: string
-      firstName:
-        description: FirstName - user's first name
-        type: string
-      id:
-        description: Id - user ID
-        type: string
-      lastName:
-        description: LastName - user's last name
+      avatar:
+        description: Avatar avatar
         type: string
     type: object
   auth.LoginRequest:
@@ -47,6 +23,30 @@ definitions:
           header for all the requests (except ones which don't require authorization)
       userId:
         description: UserId - ID of account
+        type: string
+    type: object
+  auth.OwnerProfile:
+    properties:
+      avatar:
+        description: Avatar avatar
+        type: string
+    type: object
+  auth.RegistrationRequest:
+    properties:
+      email:
+        description: Email - user email
+        type: string
+      firstName:
+        description: FirstName - user first name
+        type: string
+      lastName:
+        description: LastName - user last name
+        type: string
+      password:
+        description: Password - password
+        type: string
+      userType:
+        description: UserType - user type
         type: string
     type: object
   auth.SessionToken:
@@ -75,6 +75,27 @@ definitions:
       prevPassword:
         description: PrevPassword - current password
         type: string
+    type: object
+  auth.User:
+    properties:
+      agent:
+        $ref: '#/definitions/auth.AgentProfile'
+        description: Agent - agent profile
+      email:
+        description: Email - email
+        type: string
+      firstName:
+        description: FirstName - user's first name
+        type: string
+      id:
+        description: Id - user ID
+        type: string
+      lastName:
+        description: LastName - user's last name
+        type: string
+      owner:
+        $ref: '#/definitions/auth.OwnerProfile'
+        description: Owner - owner profile
     type: object
   http.Error:
     properties:
@@ -185,14 +206,14 @@ paths:
         name: regRequest
         required: true
         schema:
-          $ref: '#/definitions/auth.ClientRegistrationRequest'
+          $ref: '#/definitions/auth.RegistrationRequest'
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/auth.ClientUser'
+            $ref: '#/definitions/auth.User'
         "500":
           description: Internal Server Error
           schema:

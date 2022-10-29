@@ -1,4 +1,4 @@
-//+build example
+//build example
 
 package listener
 
@@ -8,7 +8,7 @@ import (
 	kitContext "github.com/africarealty/server/src/kit/context"
 	"github.com/africarealty/server/src/kit/log"
 	"github.com/africarealty/server/src/kit/queue"
-	"github.com/africarealty/server/src/kit/queue/stan"
+	"github.com/africarealty/server/src/kit/queue/jetstream"
 	"sync"
 	"testing"
 )
@@ -34,7 +34,7 @@ func Test_PublishConsume_AtMostOnce_WithTwoListeners(t *testing.T) {
 		}
 	}
 
-	pub := stan.New(logf)
+	pub := jetstream.New(logf)
 	err := pub.Open(ctx, kit.NewRandString(), &queue.Config{
 		Host:      "localhost",
 		Port:      "4222",
@@ -45,7 +45,7 @@ func Test_PublishConsume_AtMostOnce_WithTwoListeners(t *testing.T) {
 	}
 	defer pub.Close()
 
-	sub1 := stan.New(logf)
+	sub1 := jetstream.New(logf)
 	err = sub1.Open(ctx, kit.NewRandString(), &queue.Config{
 		Host:      "localhost",
 		Port:      "4222",
@@ -59,7 +59,7 @@ func Test_PublishConsume_AtMostOnce_WithTwoListeners(t *testing.T) {
 	ql1.New(topic).AtMostOnce().WithHandler(handler("1")).Add()
 	ql1.ListenAsync()
 
-	sub2 := stan.New(logf)
+	sub2 := jetstream.New(logf)
 	err = sub2.Open(ctx, kit.NewRandString(), &queue.Config{
 		Host:      "localhost",
 		Port:      "4222",
@@ -101,7 +101,7 @@ func Test_PublishConsume_AtMostOnce_WithTwoListenersAndTwoHandlers(t *testing.T)
 		}
 	}
 
-	pub := stan.New(logf)
+	pub := jetstream.New(logf)
 	err := pub.Open(ctx, kit.NewRandString(), &queue.Config{
 		Host:      "localhost",
 		Port:      "4222",
@@ -112,7 +112,7 @@ func Test_PublishConsume_AtMostOnce_WithTwoListenersAndTwoHandlers(t *testing.T)
 	}
 	defer pub.Close()
 
-	sub1 := stan.New(logf)
+	sub1 := jetstream.New(logf)
 	err = sub1.Open(ctx, kit.NewRandString(), &queue.Config{
 		Host:      "localhost",
 		Port:      "4222",
@@ -126,7 +126,7 @@ func Test_PublishConsume_AtMostOnce_WithTwoListenersAndTwoHandlers(t *testing.T)
 	ql1.New(topic).AtMostOnce().WithHandler(handler("11")).WithHandler(handler("12")).Add()
 	ql1.ListenAsync()
 
-	sub2 := stan.New(logf)
+	sub2 := jetstream.New(logf)
 	err = sub2.Open(ctx, kit.NewRandString(), &queue.Config{
 		Host:      "localhost",
 		Port:      "4222",
@@ -169,7 +169,7 @@ func Test_PublishConsume_AtLeastOnce_WithLB_WithTwoListeners(t *testing.T) {
 		}
 	}
 
-	pub := stan.New(logf)
+	pub := jetstream.New(logf)
 	err := pub.Open(ctx, kit.NewRandString(), &queue.Config{
 		Host:      "localhost",
 		Port:      "4222",
@@ -180,7 +180,7 @@ func Test_PublishConsume_AtLeastOnce_WithLB_WithTwoListeners(t *testing.T) {
 	}
 	defer pub.Close()
 
-	sub1 := stan.New(logf)
+	sub1 := jetstream.New(logf)
 	err = sub1.Open(ctx, kit.NewRandString(), &queue.Config{
 		Host:      "localhost",
 		Port:      "4222",
@@ -193,7 +193,7 @@ func Test_PublishConsume_AtLeastOnce_WithLB_WithTwoListeners(t *testing.T) {
 	ql1.New(topic).AtLeastOnce(durableId).WithLoadBalancing("group").WithHandler(handler("1")).Add()
 	ql1.ListenAsync()
 
-	sub2 := stan.New(logf)
+	sub2 := jetstream.New(logf)
 	err = sub2.Open(ctx, kit.NewRandString(), &queue.Config{
 		Host:      "localhost",
 		Port:      "4222",
@@ -238,7 +238,7 @@ func Test_PublishConsume_AtLeastOnce_WithLB_WithTwoListeners(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	sub1 = stan.New(logf)
+	sub1 = jetstream.New(logf)
 	err = sub1.Open(ctx, kit.NewRandString(), &queue.Config{
 		Host:      "localhost",
 		Port:      "4222",
@@ -251,7 +251,7 @@ func Test_PublishConsume_AtLeastOnce_WithLB_WithTwoListeners(t *testing.T) {
 	ql1.New(topic).AtLeastOnce(durableId).WithLoadBalancing("group").WithHandler(handler("1")).Add()
 	ql1.ListenAsync()
 
-	sub2 = stan.New(logf)
+	sub2 = jetstream.New(logf)
 	err = sub2.Open(ctx, kit.NewRandString(), &queue.Config{
 		Host:      "localhost",
 		Port:      "4222",
@@ -298,7 +298,7 @@ func Test_PublishConsume_AtLeastOnce_WithoutLB_WithTwoListeners(t *testing.T) {
 		}
 	}
 
-	pub := stan.New(logf)
+	pub := jetstream.New(logf)
 	err := pub.Open(ctx, kit.NewRandString(), &queue.Config{
 		Host:      "localhost",
 		Port:      "4222",
@@ -309,7 +309,7 @@ func Test_PublishConsume_AtLeastOnce_WithoutLB_WithTwoListeners(t *testing.T) {
 	}
 	defer pub.Close()
 
-	sub1 := stan.New(logf)
+	sub1 := jetstream.New(logf)
 	subClientId1 := kit.NewRandString()
 	err = sub1.Open(ctx, subClientId1, &queue.Config{
 		Host:      "localhost",
@@ -325,7 +325,7 @@ func Test_PublishConsume_AtLeastOnce_WithoutLB_WithTwoListeners(t *testing.T) {
 	ql1.New(topic).AtLeastOnce(durableId1).WithHandler(handler("1")).Add()
 	ql1.ListenAsync()
 
-	sub2 := stan.New(logf)
+	sub2 := jetstream.New(logf)
 	subClientId2 := kit.NewRandString()
 	err = sub2.Open(ctx, subClientId2, &queue.Config{
 		Host:      "localhost",
@@ -374,7 +374,7 @@ func Test_PublishConsume_AtLeastOnce_WithoutLB_WithTwoListeners(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	sub1 = stan.New(logf)
+	sub1 = jetstream.New(logf)
 	err = sub1.Open(ctx, subClientId1, &queue.Config{
 		Host:      "localhost",
 		Port:      "4222",
@@ -409,7 +409,7 @@ func Test_PublishConsume_AtLeastOnce_WithLB_SameGroupDifferentTopic(t *testing.T
 		}
 	}
 
-	pub := stan.New(logf)
+	pub := jetstream.New(logf)
 	err := pub.Open(ctx, kit.NewRandString(), &queue.Config{
 		Host:      "localhost",
 		Port:      "4222",
@@ -420,7 +420,7 @@ func Test_PublishConsume_AtLeastOnce_WithLB_SameGroupDifferentTopic(t *testing.T
 	}
 	defer pub.Close()
 
-	sub1 := stan.New(logf)
+	sub1 := jetstream.New(logf)
 	err = sub1.Open(ctx, kit.NewRandString(), &queue.Config{
 		Host:      "localhost",
 		Port:      "4222",
@@ -434,7 +434,7 @@ func Test_PublishConsume_AtLeastOnce_WithLB_SameGroupDifferentTopic(t *testing.T
 	ql1.New(topic1).AtLeastOnce(durableId).WithLoadBalancing("group").WithHandler(handler("1")).Add()
 	ql1.ListenAsync()
 
-	sub2 := stan.New(logf)
+	sub2 := jetstream.New(logf)
 	err = sub2.Open(ctx, kit.NewRandString(), &queue.Config{
 		Host:      "localhost",
 		Port:      "4222",
@@ -448,7 +448,7 @@ func Test_PublishConsume_AtLeastOnce_WithLB_SameGroupDifferentTopic(t *testing.T
 	ql2.New(topic1).AtLeastOnce(durableId).WithLoadBalancing("group").WithHandler(handler("2")).Add()
 	ql2.ListenAsync()
 
-	sub3 := stan.New(logf)
+	sub3 := jetstream.New(logf)
 	err = sub3.Open(ctx, kit.NewRandString(), &queue.Config{
 		Host:      "localhost",
 		Port:      "4222",
@@ -462,7 +462,7 @@ func Test_PublishConsume_AtLeastOnce_WithLB_SameGroupDifferentTopic(t *testing.T
 	ql3.New(topic2).AtLeastOnce(durableId).WithLoadBalancing("group").WithHandler(handler("3")).Add()
 	ql3.ListenAsync()
 
-	sub4 := stan.New(logf)
+	sub4 := jetstream.New(logf)
 	err = sub4.Open(ctx, kit.NewRandString(), &queue.Config{
 		Host:      "localhost",
 		Port:      "4222",
@@ -524,7 +524,7 @@ func Test_PublishConsume_AtLeastOnce_WithLB_Multiple(t *testing.T) {
 		}
 	}
 
-	pub := stan.New(logf)
+	pub := jetstream.New(logf)
 	err := pub.Open(ctx, kit.NewRandString(), &queue.Config{
 		Host:      "localhost",
 		Port:      "4222",
@@ -535,7 +535,7 @@ func Test_PublishConsume_AtLeastOnce_WithLB_Multiple(t *testing.T) {
 	}
 	defer pub.Close()
 
-	sub1 := stan.New(logf)
+	sub1 := jetstream.New(logf)
 	err = sub1.Open(ctx, kit.NewRandString(), &queue.Config{
 		Host:      "localhost",
 		Port:      "4222",

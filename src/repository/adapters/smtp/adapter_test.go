@@ -1,4 +1,4 @@
-//+build integration
+//go:build integration
 
 package smtp
 
@@ -10,6 +10,7 @@ import (
 	"github.com/africarealty/server/src/repository/storage/communications"
 	"github.com/africarealty/server/src/service"
 	"github.com/stretchr/testify/suite"
+	"os"
 	"testing"
 )
 
@@ -22,6 +23,8 @@ type smtpTestSuite struct {
 // SetupSuite is called once for a suite
 func (s *smtpTestSuite) SetupSuite() {
 	s.Suite.Init(service.LF())
+
+	os.Setenv("ARROOT", "/home/mikhailb/work/africarealty/dev")
 
 	// load config
 	cfg, err := service.LoadConfig()

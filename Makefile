@@ -19,12 +19,13 @@ DOCKER_URL = dockerhub.com/africarealty/server
 DB_ADMIN_USER ?= admin
 DB_ADMIN_PASSWORD ?= admin
 DB_HOST ?= localhost
+DB_PORT ?= 25432
 DB_NAME ?= africarealty
 DB_USER ?= $(SERVICE)
 DB_PASSWORD ?= $(SERVICE)
 
 DB_DRIVER = postgres
-DB_STRING = "user=$(DB_AUTH_USER) password=$(DB_AUTH_PASSWORD) dbname=$(DB_NAME) host=$(DB_HOST) sslmode=disable"
+DB_STRING = "user=$(DB_USER) password=$(DB_PASSWORD) dbname=$(DB_NAME) host=$(DB_HOST) sslmode=disable port=$(DB_PORT)"
 DB_ADMIN_STRING = "user=$(DB_ADMIN_USER) password=$(DB_ADMIN_PASSWORD) dbname=$(DB_NAME) host=$(DB_HOST) sslmode=disable"
 DB_INIT_FOLDER = "./src/db/init"
 DB_MIG_FOLDER = "./src/db/migrations"
@@ -130,7 +131,7 @@ init-infra:
 	sudo mkdir -p /var/africarealty/docker/volumes/pg/data; \
 	sudo mkdir -p /var/africarealty/docker/volumes/minio; \
 	sudo mkdir -p /var/africarealty/docker/volumes/es; \
-	sudo mkdir -p /var/moiservice/docker/volumes/nats; \
+	sudo mkdir -p /var/africarealty/docker/volumes/nats; \
 	sudo chmod -R g+rwx /var/africarealty/docker/volumes; \
 	sudo chgrp -R 1000 /var/africarealty/docker/volumes; \
 	sudo ls -l /var/africarealty/docker/volumes/
@@ -140,7 +141,7 @@ rm-infra:
 	sudo rm -rfd /var/africarealty/docker/volumes/pg; \
 	sudo rm -rfd /var/africarealty/docker/volumes/minio; \
 	sudo rm -rfd /var/africarealty/docker/volumes/es; \
-	sudo rm -rfd /var/moiservice/docker/volumes/nats; \
+	sudo rm -rfd /var/africarealty/docker/volumes/nats; \
 	sudo rm -rfd /var/africarealty/docker/volumes/aerospike
 
 run-infra:

@@ -47,12 +47,20 @@ type CfgAuth struct {
 	}
 }
 
+type CfgSdk struct {
+	Url      string
+	User     string
+	Password string
+	Log      *log.Config
+}
+
 type Config struct {
 	Log            *log.Config
 	Http           *kitHttp.Config
 	Storages       *CfgStorages
 	Auth           *CfgAuth
 	Communications *CfgCommunications
+	Sdk            *CfgSdk
 }
 
 func LoadConfig() (*Config, error) {

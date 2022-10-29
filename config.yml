@@ -55,13 +55,13 @@ communications:
     # smtp server host
     smtp-server: ${SMTP_HOST|localhost}
     # smtp server port
-    smtp-port: ${SMTP_PORT|1025}
+    smtp-port: ${SMTP_PORT|11025}
     # smtp user
-    smtp-user: ${SMTP_USERNAME|rgs@test.ru}
+    smtp-user: ${SMTP_USERNAME|mail@africarealty.io}
     # smtp password
     smtp-password: ${SMTP_PASSWORD|}
     # smtp from
-    smtp-from: ${SMTP_FROM|default-from@test.mail}
+    smtp-from: ${SMTP_FROM|noreply@africarealty.io}
 
 # storage configurations
 storages:
@@ -97,3 +97,21 @@ log:
   # if true, outputs running service instance info
   service: ${AR_LOG_SERVICE|true}
 
+# sdk config
+sdk:
+  # sdk base url
+  url: ${SDK_URL|http://localhost:8090}
+  # sdk user
+  user: ${SDK_USER|sdk}
+  # password
+  password: ${SDK_PASSWORD|sdk}
+  # logging configuration
+  log:
+    # level
+    level: ${SDK_LOG_LEVEL|trace}
+    # output format (plain, json)
+    format: ${SDK_LOG_FORMAT|plain}
+    # if true, outputs context info
+    context: ${SDK_LOG_CONTEXT|true}
+    # if true, outputs running service instance info
+    service: ${SDK_LOG_SERVICE|true}

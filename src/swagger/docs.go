@@ -157,7 +157,7 @@ var doc = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/auth.ClientRegistrationRequest"
+                            "$ref": "#/definitions/auth.RegistrationRequest"
                         }
                     }
                 ],
@@ -165,7 +165,7 @@ var doc = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/auth.ClientUser"
+                            "$ref": "#/definitions/auth.User"
                         }
                     },
                     "500": {
@@ -226,44 +226,11 @@ var doc = `{
         }
     },
     "definitions": {
-        "auth.ClientRegistrationRequest": {
+        "auth.AgentProfile": {
             "type": "object",
             "properties": {
-                "email": {
-                    "description": "Email - user's email",
-                    "type": "string"
-                },
-                "firstName": {
-                    "description": "FirstName - user's first name",
-                    "type": "string"
-                },
-                "lastName": {
-                    "description": "LastName - user's last name",
-                    "type": "string"
-                },
-                "password": {
-                    "description": "Password - password",
-                    "type": "string"
-                }
-            }
-        },
-        "auth.ClientUser": {
-            "type": "object",
-            "properties": {
-                "email": {
-                    "description": "Email - email",
-                    "type": "string"
-                },
-                "firstName": {
-                    "description": "FirstName - user's first name",
-                    "type": "string"
-                },
-                "id": {
-                    "description": "Id - user ID",
-                    "type": "string"
-                },
-                "lastName": {
-                    "description": "LastName - user's last name",
+                "avatar": {
+                    "description": "Avatar avatar",
                     "type": "string"
                 }
             }
@@ -290,6 +257,40 @@ var doc = `{
                 },
                 "userId": {
                     "description": "UserId - ID of account",
+                    "type": "string"
+                }
+            }
+        },
+        "auth.OwnerProfile": {
+            "type": "object",
+            "properties": {
+                "avatar": {
+                    "description": "Avatar avatar",
+                    "type": "string"
+                }
+            }
+        },
+        "auth.RegistrationRequest": {
+            "type": "object",
+            "properties": {
+                "email": {
+                    "description": "Email - user email",
+                    "type": "string"
+                },
+                "firstName": {
+                    "description": "FirstName - user first name",
+                    "type": "string"
+                },
+                "lastName": {
+                    "description": "LastName - user last name",
+                    "type": "string"
+                },
+                "password": {
+                    "description": "Password - password",
+                    "type": "string"
+                },
+                "userType": {
+                    "description": "UserType - user type",
                     "type": "string"
                 }
             }
@@ -329,6 +330,35 @@ var doc = `{
                 "prevPassword": {
                     "description": "PrevPassword - current password",
                     "type": "string"
+                }
+            }
+        },
+        "auth.User": {
+            "type": "object",
+            "properties": {
+                "agent": {
+                    "description": "Agent - agent profile",
+                    "$ref": "#/definitions/auth.AgentProfile"
+                },
+                "email": {
+                    "description": "Email - email",
+                    "type": "string"
+                },
+                "firstName": {
+                    "description": "FirstName - user's first name",
+                    "type": "string"
+                },
+                "id": {
+                    "description": "Id - user ID",
+                    "type": "string"
+                },
+                "lastName": {
+                    "description": "LastName - user's last name",
+                    "type": "string"
+                },
+                "owner": {
+                    "description": "Owner - owner profile",
+                    "$ref": "#/definitions/auth.OwnerProfile"
                 }
             }
         },

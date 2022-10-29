@@ -43,7 +43,7 @@ func TestSmtpClientSuite(t *testing.T) {
 	suite.Run(t, new(smtpClientTestSuite))
 }
 
-func (s *smtpClientTestSuite) Test_Send_SentSuccessfully() {
+func (s *smtpClientTestSuite) Test_Send_Sent_Ok() {
 	reader1 := bytes.NewReader([]byte("filecontent1"))
 	reader2 := bytes.NewReader([]byte("filecontent2"))
 	tests := []struct {

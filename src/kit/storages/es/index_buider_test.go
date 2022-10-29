@@ -1,4 +1,5 @@
-//+build example
+//go:build example
+// +build example
 
 package es
 
