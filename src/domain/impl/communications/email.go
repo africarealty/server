@@ -110,10 +110,14 @@ func (e *emailImpl) RequestHandler() listener.QueueMessageHandler {
 		l.C(ctx).Dbg()
 
 		var email = &domain.Email{
-			UserId:   emailRq.UserId,
-			Email:    emailRq.Email,
-			Template: emailRq.Template,
-			From:     emailRq.From,
+			Id:          emailRq.Id,
+			UserId:      emailRq.UserId,
+			Subject:     emailRq.Subject,
+			Text:        emailRq.Text,
+			Email:       emailRq.Email,
+			Template:    emailRq.Template,
+			LinkFileIds: emailRq.LinkFileIds,
+			From:        emailRq.From,
 		}
 
 		for _, fileId := range emailRq.LinkFileIds {

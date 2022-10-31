@@ -12,8 +12,8 @@ var (
 	ErrEmailValidationInvalidFrom = func(ctx context.Context, p string) error {
 		return er.WithBuilder(ErrCodeEmailValidationInvalidFrom, "invalid from").Business().C(ctx).F(er.FF{"from": p}).Err()
 	}
-	ErrEmailSmtpInvalidRequest = func(ctx context.Context) error {
-		return er.WithBuilder(ErrCodeEmailSmtpInvalidRequest, "invalid request").Business().C(ctx).Err()
+	ErrEmailSmtpInvalidConfig = func(ctx context.Context) error {
+		return er.WithBuilder(ErrCodeEmailSmtpInvalidConfig, "invalid config").Business().C(ctx).Err()
 	}
 	ErrEmailStorageCreateEmailDb = func(cause error, ctx context.Context) error {
 		return er.WrapWithBuilder(cause, ErrCodeEmailStorageCreateEmailDb, "").C(ctx).Err()

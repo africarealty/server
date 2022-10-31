@@ -68,12 +68,18 @@ type TemplateStorage interface {
 }
 
 type EmailRequest struct {
+	// Id should be empty for a new request
+	Id string
 	// UserId(Optional) - if sending to specific user
 	UserId string
 	// Email of user
 	Email string
 	// Template (Optional) - empty if sending confirmation code
 	Template *TemplateRequest
+	// Subject - email subject
+	Subject string
+	//Text - final text of email message
+	Text string
 	// LinkFileIds (Optional) - email attachments fileID list
 	LinkFileIds []string
 	// From (Optional) - email From field ('Display From' as well as 'Mail From')

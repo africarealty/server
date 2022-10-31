@@ -124,6 +124,33 @@ info:
   title: AfricaRealty API
   version: "1.0"
 paths:
+  /auth/activation:
+    post:
+      parameters:
+      - description: user id
+        in: query
+        name: userId
+        required: true
+        type: string
+      - description: activation token
+        in: query
+        name: token
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/auth.User'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/http.Error'
+      summary: activates a user by token
+      tags:
+      - auth
   /auth/login:
     post:
       consumes:

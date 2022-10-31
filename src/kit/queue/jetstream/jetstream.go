@@ -9,6 +9,7 @@ import (
 	"github.com/africarealty/server/src/kit/log"
 	"github.com/africarealty/server/src/kit/queue"
 	"github.com/nats-io/nats.go"
+	"regexp"
 	"sync"
 )
 
@@ -120,9 +121,19 @@ func (s *jsImpl) LostConnectionHandler(connection *nats.Conn, err error) {
 	s.lostConnectionNotify()
 }
 
+var rg = regexp.MustCompile(`[^a-zA-Z0-9]+`)
+
+func (s *jsImpl) topicToStream(topic string) string {
+	return rg.ReplaceAllString(topic, "")
+}
+
 func (s *jsImpl) Declare(ctx context.Context, qt queue.QueueType, topic string) error {
 	s.l().Mth("declare").F(log.FF{"topic": topic, "type": qt.String()}).Dbg()
-	return nil
+	_, err := s.js.AddStream(&nats.StreamConfig{
+		Name:     s.topicToStream(topic),
+		Subjects: []string{topic},
+	})
+	return err
 }
 
 func (s *jsImpl) Close() error {
@@ -176,7 +187,7 @@ func (s *jsImpl) Subscribe(qt queue.QueueType, topic, durableId string, receiver
 	if qt == queue.QueueTypeAtLeastOnce {
 		// add stream if not exists
 		_, err := s.js.AddStream(&nats.StreamConfig{
-			Name:     topic,
+			Name:     s.topicToStream(topic),
 			Subjects: []string{topic},
 		})
 		if err != nil {
@@ -213,7 +224,7 @@ func (s *jsImpl) SubscribeLB(qt queue.QueueType, topic, loadBalancingGroup, dura
 	if qt == queue.QueueTypeAtLeastOnce {
 		// add stream if not exists
 		_, err := s.js.AddStream(&nats.StreamConfig{
-			Name:     topic,
+			Name:     s.topicToStream(topic),
 			Subjects: []string{topic},
 		})
 		if err != nil {

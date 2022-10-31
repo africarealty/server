@@ -10,14 +10,13 @@ const (
 	UserTypeClient = "client"
 
 	AuthGroupSysAdmin = "sysadmin"
-	AuthGroupClient   = "client"
+	AuthGroupOwner    = "owner"
 
-	AuthRoleSysAdmin        = "sysadmin"
-	AuthRoleArbitrageClient = "arbitrage.client"
+	AuthRoleSysAdmin     = "sysadmin"
+	AuthRoleProfileOwner = "profile.owner"
 
-	AuthResUserProfileAll     = "users.all"
-	AuthResUserProfileMy      = "users.my"
-	AuthResArbitrageChainsAll = "arbitrage.chains.all"
+	AuthResUserProfileAll = "profile.all"
+	AuthResUserProfileMy  = "profile.my"
 )
 
 // Profile common profile attrs
@@ -37,8 +36,8 @@ type AgentProfile struct {
 
 type User struct {
 	auth.User               // basic profile attributes
-	Owner     *OwnerProfile // Owner owner profile
-	Agent     *AgentProfile // Agent agent profile
+	Owner     *OwnerProfile // Owner profile
+	Agent     *AgentProfile // Agent profile
 }
 
 type UserService interface {
@@ -54,6 +53,8 @@ type UserService interface {
 	SetPassword(ctx context.Context, userId, newPasswordHash string) error
 	// SetActivationToken sets token for the given user with the given ttl
 	SetActivationToken(ctx context.Context, userId, token string, ttl uint32) error
+	// ActivateByToken activates a user by token
+	ActivateByToken(ctx context.Context, userId, token string) (*User, error)
 }
 
 type UserStorage interface {

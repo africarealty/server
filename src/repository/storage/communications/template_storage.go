@@ -18,13 +18,13 @@ const (
 	AeroSetCommunicationTemplateCache = "template_cache"
 )
 
-type TemplateStorageImpl struct {
+type templateStorageImpl struct {
 	pg   *pg.Storage
 	aero kitAero.Aerospike
 }
 
-func NewTemplateStorage(pg *pg.Storage, aero kitAero.Aerospike) *TemplateStorageImpl {
-	return &TemplateStorageImpl{
+func newTemplateStorage(pg *pg.Storage, aero kitAero.Aerospike) *templateStorageImpl {
+	return &templateStorageImpl{
 		pg:   pg,
 		aero: aero,
 	}
@@ -37,11 +37,11 @@ type template struct {
 	Body  string `gorm:"column:body"`
 }
 
-func (t *TemplateStorageImpl) l() log.CLogger {
+func (t *templateStorageImpl) l() log.CLogger {
 	return service.L().Cmp("template-storage")
 }
 
-func (t *TemplateStorageImpl) clearCacheTemplates(ctx context.Context, templatesId string) error {
+func (t *templateStorageImpl) clearCacheTemplates(ctx context.Context, templatesId string) error {
 	key, err := aero.NewKey(storage.AeroNsCache, AeroSetCommunicationTemplateCache, templatesId)
 	if err != nil {
 		return errors.ErrTemplateStorageAeroKey(err, ctx)
@@ -53,7 +53,7 @@ func (t *TemplateStorageImpl) clearCacheTemplates(ctx context.Context, templates
 	return nil
 }
 
-func (t *TemplateStorageImpl) getFromCacheById(ctx context.Context, templateId string) (*domain.Template, error) {
+func (t *templateStorageImpl) getFromCacheById(ctx context.Context, templateId string) (*domain.Template, error) {
 	t.l().Mth("get-cache").C(ctx).F(log.FF{"templateId": templateId}).Trc()
 	key, err := aero.NewKey(storage.AeroNsCache, AeroSetCommunicationTemplateCache, templateId)
 	if err != nil {
@@ -68,7 +68,7 @@ func (t *TemplateStorageImpl) getFromCacheById(ctx context.Context, templateId s
 	return t.toTemplateCacheDomain(rec), nil
 }
 
-func (t *TemplateStorageImpl) setCache(ctx context.Context, template *domain.Template) error {
+func (t *templateStorageImpl) setCache(ctx context.Context, template *domain.Template) error {
 	t.l().Mth("set-cache").C(ctx).F(log.FF{"templateId": template.Id}).Trc()
 	key, err := aero.NewKey(storage.AeroNsCache, AeroSetCommunicationTemplateCache, template.Id)
 	if err != nil {
@@ -83,7 +83,7 @@ func (t *TemplateStorageImpl) setCache(ctx context.Context, template *domain.Tem
 	return nil
 }
 
-func (t *TemplateStorageImpl) Get(ctx context.Context, templateId string) (*domain.Template, error) {
+func (t *templateStorageImpl) Get(ctx context.Context, templateId string) (*domain.Template, error) {
 	l := t.l().Mth("get").C(ctx).F(log.FF{"templateId": templateId}).Trc()
 	if templateId == "" {
 		return nil, nil
@@ -115,7 +115,7 @@ func (t *TemplateStorageImpl) Get(ctx context.Context, templateId string) (*doma
 	return templ, nil
 }
 
-func (t *TemplateStorageImpl) Create(ctx context.Context, template *domain.Template) error {
+func (t *templateStorageImpl) Create(ctx context.Context, template *domain.Template) error {
 	t.l().C(ctx).Mth("create").Dbg()
 	if err := t.pg.Instance.Create(t.toTemplateDto(template)).Error; err != nil {
 		return errors.ErrTemplateStorageDbCreate(err, ctx)
@@ -123,7 +123,7 @@ func (t *TemplateStorageImpl) Create(ctx context.Context, template *domain.Templ
 	return nil
 }
 
-func (t *TemplateStorageImpl) Update(ctx context.Context, template *domain.Template) error {
+func (t *templateStorageImpl) Update(ctx context.Context, template *domain.Template) error {
 	l := t.l().C(ctx).Mth("update").Dbg()
 	eg := goroutine.NewGroup(ctx).WithLogger(l)
 	// save to store
@@ -141,7 +141,7 @@ func (t *TemplateStorageImpl) Update(ctx context.Context, template *domain.Templ
 	return eg.Wait()
 }
 
-func (t *TemplateStorageImpl) Delete(ctx context.Context, id string) error {
+func (t *templateStorageImpl) Delete(ctx context.Context, id string) error {
 	l := t.l().C(ctx).Mth("delete").Dbg()
 	eg := goroutine.NewGroup(ctx).WithLogger(l)
 	// delete from storage
@@ -159,7 +159,7 @@ func (t *TemplateStorageImpl) Delete(ctx context.Context, id string) error {
 	return eg.Wait()
 }
 
-func (t *TemplateStorageImpl) Search(ctx context.Context, query string) ([]*domain.Template, error) {
+func (t *templateStorageImpl) Search(ctx context.Context, query string) ([]*domain.Template, error) {
 	t.l().C(ctx).Mth("search").Dbg()
 	var dtos []*template
 	if res := t.pg.Instance.Where("UPPER(title) like UPPER(?)", "%"+query+"%").Find(&dtos); res.Error == nil {

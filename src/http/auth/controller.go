@@ -14,14 +14,10 @@ import (
 )
 
 type Controller interface {
-
-	// Ready returns OK if service is ready
-	Ready(http.ResponseWriter, *http.Request)
-
-	// auth
 	Login(http.ResponseWriter, *http.Request)
 	Logout(http.ResponseWriter, *http.Request)
 	Registration(http.ResponseWriter, *http.Request)
+	Activation(http.ResponseWriter, *http.Request)
 	TokenRefresh(http.ResponseWriter, *http.Request)
 	SetPassword(http.ResponseWriter, *http.Request)
 }
@@ -48,15 +44,6 @@ func (c *controllerIml) l() log.CLogger {
 	return service.L().Cmp("auth-controller")
 }
 
-// Ready godoc
-// @Summary check system is ready
-// @Router /ready [get]
-// @Success 200
-// @tags system
-func (c *controllerIml) Ready(w http.ResponseWriter, r *http.Request) {
-	c.RespondWithStatus(w, http.StatusOK, "OK")
-}
-
 // Registration godoc
 // @Summary registers a new client
 // @Accept json
@@ -78,6 +65,40 @@ func (c *controllerIml) Registration(w http.ResponseWriter, r *http.Request) {
 	}
 
 	user, err := c.userRegUc.Register(ctx, c.toRegRequestDomain(rq))
+	if err != nil {
+		c.RespondError(w, err)
+		return
+	}
+
+	c.RespondOK(w, c.toUserApi(user))
+}
+
+// Activation godoc
+// @Summary activates a user by token
+// @produce json
+// @Param userId query string true "user id"
+// @Param token query string true "activation token"
+// @Success 200 {object} User
+// @Failure 500 {object} http.Error
+// @Router /auth/activation [post]
+// @tags auth
+func (c *controllerIml) Activation(w http.ResponseWriter, r *http.Request) {
+
+	ctx := r.Context()
+	c.l().C(ctx).Mth("activation").Trc()
+
+	userId, err := c.FormVal(r, ctx, "userId", false)
+	if err != nil {
+		c.RespondError(w, err)
+		return
+	}
+	token, err := c.FormVal(r, ctx, "token", false)
+	if err != nil {
+		c.RespondError(w, err)
+		return
+	}
+
+	user, err := c.userService.ActivateByToken(ctx, userId, token)
 	if err != nil {
 		c.RespondError(w, err)
 		return

@@ -6,7 +6,7 @@ import (
 	"github.com/africarealty/server/src/kit/storages/pg"
 )
 
-func (e *EmailStorageImpl) toEmailDto(d *domain.Email) *email {
+func (e *emailStorageImpl) toEmailDto(d *domain.Email) *email {
 	if d == nil {
 		return nil
 	}

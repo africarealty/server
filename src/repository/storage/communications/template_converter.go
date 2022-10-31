@@ -6,7 +6,7 @@ import (
 	"github.com/africarealty/server/src/domain"
 )
 
-func (t *TemplateStorageImpl) toTemplateDto(templ *domain.Template) *template {
+func (t *templateStorageImpl) toTemplateDto(templ *domain.Template) *template {
 	if templ == nil {
 		return nil
 	}
@@ -17,7 +17,7 @@ func (t *TemplateStorageImpl) toTemplateDto(templ *domain.Template) *template {
 	}
 }
 
-func (t *TemplateStorageImpl) toTemplateDomain(templ *template) *domain.Template {
+func (t *templateStorageImpl) toTemplateDomain(templ *template) *domain.Template {
 	if templ == nil {
 		return nil
 	}
@@ -28,7 +28,7 @@ func (t *TemplateStorageImpl) toTemplateDomain(templ *template) *domain.Template
 	}
 }
 
-func (t *TemplateStorageImpl) toTemplatesDomain(templ []*template) []*domain.Template {
+func (t *templateStorageImpl) toTemplatesDomain(templ []*template) []*domain.Template {
 	if templ == nil {
 		return nil
 	}
@@ -39,7 +39,7 @@ func (t *TemplateStorageImpl) toTemplatesDomain(templ []*template) []*domain.Tem
 	return res
 }
 
-func (t *TemplateStorageImpl) toTemplateCacheDomain(rec *aero.Record) *domain.Template {
+func (t *templateStorageImpl) toTemplateCacheDomain(rec *aero.Record) *domain.Template {
 	if rec == nil {
 		return nil
 	}
@@ -49,7 +49,7 @@ func (t *TemplateStorageImpl) toTemplateCacheDomain(rec *aero.Record) *domain.Te
 	return templ
 }
 
-func (t *TemplateStorageImpl) toTemplateCache(templ *domain.Template) aero.BinMap {
+func (t *templateStorageImpl) toTemplateCache(templ *domain.Template) aero.BinMap {
 	templBytes, _ := json.Marshal(templ)
 	return aero.BinMap{
 		"template": string(templBytes),

@@ -24,6 +24,7 @@ func (r *Router) Set() error {
 		http.R("/api/auth/token/refresh", r.ctrl.TokenRefresh).POST().NoAuth(),
 		http.R("/api/auth/logout", r.ctrl.Logout).POST(),
 		http.R("/api/auth/registration", r.ctrl.Registration).POST().NoAuth(),
+		http.R("/api/auth/activation", r.ctrl.Activation).POST().NoAuth(),
 		http.R("/api/auth/password", r.ctrl.SetPassword).POST(),
 	)
 }

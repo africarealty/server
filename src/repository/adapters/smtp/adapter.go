@@ -10,41 +10,38 @@ import (
 	"net/smtp"
 )
 
-type InitRq struct {
-	EmailStorage domain.EmailStorage
-	Cfg          *service.CfgEmail
-}
-
 type Adapter interface {
 	kitService.Adapter
 	domain.EmailRepository
 }
 
 type adapterImpl struct {
-	serviceImpl *emailImpl
-	cfg         *service.CfgEmail
-	msgBuilder  *messageBuilder
+	serviceImpl  *emailImpl
+	cfg          *service.Config
+	msgBuilder   *messageBuilder
+	emailStorage domain.EmailStorage
 }
 
 func (a *adapterImpl) l() log.CLogger {
 	return service.L().Cmp("smtp-adapter")
 }
 
-func NewAdapter() Adapter {
+func NewAdapter(emailStorage domain.EmailStorage) Adapter {
 	return &adapterImpl{
-		serviceImpl: newEmailClient(),
-		msgBuilder:  newMessageBuilder(),
+		serviceImpl:  newEmailClient(),
+		msgBuilder:   newMessageBuilder(),
+		emailStorage: emailStorage,
 	}
 }
 
 func (a *adapterImpl) Init(ctx context.Context, cfg interface{}) error {
-	l := a.l().Mth("init")
+	a.l().Mth("init").Trc()
 
-	rq, ok := cfg.(*InitRq)
+	var ok bool
+	a.cfg, ok = cfg.(*service.Config)
 	if !ok {
-		return errors.ErrEmailSmtpInvalidRequest(ctx)
+		return errors.ErrEmailSmtpInvalidConfig(ctx)
 	}
-	a.cfg = rq.Cfg
 
 	smtpClient := mailClient{sendMail: func(addr string, auth smtp.Auth, from string, to []string, msg []byte) error {
 		err := smtp.SendMail(addr, auth, from, to, msg)
@@ -52,10 +49,9 @@ func (a *adapterImpl) Init(ctx context.Context, cfg interface{}) error {
 		return err
 	}}
 
-	if err := a.serviceImpl.Init(a.cfg, rq.EmailStorage, smtpClient); err != nil {
+	if err := a.serviceImpl.Init(a.cfg.Communications.Email, a.emailStorage, smtpClient); err != nil {
 		return err
 	}
-	l.Dbg("smtp-client initialized")
 
 	return nil
 }

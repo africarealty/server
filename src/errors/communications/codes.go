@@ -23,5 +23,5 @@ const (
 	ErrCodeTemplateStorageGetCache     = "COMM-020"
 	ErrCodeTemplateStoragePutCache     = "COMM-021"
 	ErrCodeTemplateStorageGetDb        = "COMM-022"
-	ErrCodeEmailSmtpInvalidRequest     = "COMM-023"
+	ErrCodeEmailSmtpInvalidConfig      = "COMM-023"
 )

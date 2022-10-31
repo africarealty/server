@@ -25,7 +25,6 @@ type Sdk struct {
 	cfg         *service.CfgSdk
 	baseUrl     string
 	accessToken string
-	username    string
 	logger      *log.Logger
 }
 

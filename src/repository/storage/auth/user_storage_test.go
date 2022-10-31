@@ -57,7 +57,7 @@ func (s *userStorageTestSuite) getOwnerUser() *domain.User {
 			FirstName:   "First",
 			LastName:    "Last",
 			ActivatedAt: &now,
-			Groups:      []string{domain.AuthGroupClient},
+			Groups:      []string{domain.AuthGroupOwner},
 		},
 		Owner: &domain.OwnerProfile{
 			Profile: domain.Profile{

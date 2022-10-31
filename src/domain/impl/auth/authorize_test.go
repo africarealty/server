@@ -134,7 +134,7 @@ func (s *authorizeTestSuite) Test_Authorize_When_ClientNoPermissionConfigured() 
 		},
 	}
 	session := &auth.Session{
-		Roles: []string{domain.AuthRoleArbitrageClient},
+		Roles: []string{domain.AuthRoleProfileOwner},
 	}
 	s.storage.On("Get", s.Ctx, rq.SessionId).Return(session, nil)
 	_, err := s.authorizeSvc.AuthorizeSession(s.Ctx, rq)
@@ -152,7 +152,7 @@ func (s *authorizeTestSuite) Test_Authorize_When_ClientNoPermission_AccessDenied
 		},
 	}
 	session := &auth.Session{
-		Roles: []string{domain.AuthRoleArbitrageClient},
+		Roles: []string{domain.AuthRoleProfileOwner},
 	}
 	s.storage.On("Get", s.Ctx, rq.SessionId).Return(session, nil)
 	allowed, err := s.authorizeSvc.AuthorizeSession(s.Ctx, rq)
@@ -171,7 +171,7 @@ func (s *authorizeTestSuite) Test_Authorize_When_ClientGrantedPermission() {
 		},
 	}
 	session := &auth.Session{
-		Roles: []string{domain.AuthRoleArbitrageClient},
+		Roles: []string{domain.AuthRoleProfileOwner},
 	}
 	s.storage.On("Get", s.Ctx, rq.SessionId).Return(session, nil)
 	allowed, err := s.authorizeSvc.AuthorizeSession(s.Ctx, rq)
@@ -190,7 +190,7 @@ func (s *authorizeTestSuite) Test_Authorize_When_ClientNoPermission_MultipleAcce
 		},
 	}
 	session := &auth.Session{
-		Roles: []string{domain.AuthRoleArbitrageClient},
+		Roles: []string{domain.AuthRoleProfileOwner},
 	}
 	s.storage.On("Get", s.Ctx, rq.SessionId).Return(session, nil)
 	allowed, err := s.authorizeSvc.AuthorizeSession(s.Ctx, rq)
@@ -213,7 +213,7 @@ func (s *authorizeTestSuite) Test_Authorize_When_ClientNoPermission_MultipleReso
 		},
 	}
 	session := &auth.Session{
-		Roles: []string{domain.AuthRoleArbitrageClient},
+		Roles: []string{domain.AuthRoleProfileOwner},
 	}
 	s.storage.On("Get", s.Ctx, rq.SessionId).Return(session, nil)
 	allowed, err := s.authorizeSvc.AuthorizeSession(s.Ctx, rq)
@@ -223,13 +223,13 @@ func (s *authorizeTestSuite) Test_Authorize_When_ClientNoPermission_MultipleReso
 
 func (s *authorizeTestSuite) Test_GetRolesForGroups() {
 	// two groups
-	roles, err := s.authorizeSvc.GetRolesForGroups(s.Ctx, []string{domain.AuthGroupSysAdmin, domain.AuthGroupClient})
+	roles, err := s.authorizeSvc.GetRolesForGroups(s.Ctx, []string{domain.AuthGroupSysAdmin, domain.AuthGroupOwner})
 	s.Nil(err)
-	s.ElementsMatch(roles, []string{domain.AuthRoleSysAdmin, domain.AuthRoleArbitrageClient})
+	s.ElementsMatch(roles, []string{domain.AuthRoleSysAdmin, domain.AuthRoleProfileOwner})
 	// one group
-	roles, err = s.authorizeSvc.GetRolesForGroups(s.Ctx, []string{domain.AuthGroupClient})
+	roles, err = s.authorizeSvc.GetRolesForGroups(s.Ctx, []string{domain.AuthGroupOwner})
 	s.Nil(err)
-	s.ElementsMatch(roles, []string{domain.AuthRoleArbitrageClient})
+	s.ElementsMatch(roles, []string{domain.AuthRoleProfileOwner})
 	// empty
 	roles, err = s.authorizeSvc.GetRolesForGroups(s.Ctx, []string{})
 	s.Nil(err)

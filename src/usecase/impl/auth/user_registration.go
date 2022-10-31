@@ -18,11 +18,12 @@ type userRegistrationImpl struct {
 	cfg          *service.Config
 }
 
-func NewUserRegistrationImpl(userService domain.UserService, emailService domain.EmailService, pwdService auth.PasswordService) usecase.UserRegistrationUseCase {
+func NewUserRegistrationImpl(userService domain.UserService, emailService domain.EmailService, pwdService auth.PasswordService, cfg *service.Config) usecase.UserRegistrationUseCase {
 	return &userRegistrationImpl{
 		userService:  userService,
 		emailService: emailService,
 		pwdService:   pwdService,
+		cfg:          cfg,
 	}
 }
 
@@ -97,5 +98,5 @@ func (u *userRegistrationImpl) Register(ctx context.Context, rq *usecase.UserReg
 	}
 	l.Dbg("email sent")
 
-	return nil, nil
+	return user, nil
 }

@@ -45,13 +45,6 @@ type rolePermissions struct {
 	Permissions []string
 }
 
-// permissions specifies access on resources for session roles
-var permissions = map[string][]rolePermissions{
-	domain.AuthResUserProfileAll:     {rolePermissions{Role: domain.AuthRoleSysAdmin, Permissions: []string{auth.AccessR, auth.AccessW, auth.AccessD}}},
-	domain.AuthResArbitrageChainsAll: {rolePermissions{Role: domain.AuthRoleArbitrageClient, Permissions: []string{auth.AccessR}}},
-	domain.AuthResUserProfileMy:      {rolePermissions{Role: domain.AuthRoleArbitrageClient, Permissions: []string{auth.AccessR, auth.AccessW}}},
-}
-
 func (s *authorizeSvcImpl) authorizeSession(ctx context.Context, rq *auth.AuthorizationRequest) error {
 	s.l().C(ctx).Mth("authorize-int").Trc()
 
@@ -130,11 +123,6 @@ func (s *authorizeSvcImpl) AuthorizeSession(ctx context.Context, rq *auth.Author
 			return true, nil
 		}
 	}
-}
-
-var groupRoles = map[string][]string{
-	domain.AuthGroupSysAdmin: {domain.AuthRoleSysAdmin},
-	domain.AuthGroupClient:   {domain.AuthRoleArbitrageClient},
 }
 
 func (s *authorizeSvcImpl) GetRolesForGroups(ctx context.Context, groups []string) ([]string, error) {

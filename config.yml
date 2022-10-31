@@ -26,18 +26,20 @@ http:
   read-buffer-size-bytes: ${HTTP_READ_BUFFER_SIZE_BYTES|1024}
 
 auth:
-  # access token
-  access-token:
-    # secret
-    secret: ${AUTH_ACCESS_TOKEN_SECRET|c78f90dbcbaa485db57f7b2d9c56143f}
-    # expiration period in seconds
-    expiration-period-sec: ${AUTH_ACCESS_TOKEN_EXPIRATION_SEC|9000}
-  # refresh token
-  refresh-token:
-    # secret
-    secret: ${AUTH_REFRESH_TOKEN_SECRET|c94f85dbcbaa345db57f7b2d9c38743f}
-    # expiration period in seconds
-    expiration-period-sec: ${AUTH_REFRESH_TOKEN_EXPIRATION_SEC|604800}
+  # session config
+  session:
+    # access token
+    access-token:
+      # secret
+      secret: ${AUTH_ACCESS_TOKEN_SECRET|c78f90dbcbaa485db57f7b2d9c56143f}
+      # expiration period in seconds
+      expiration-period-sec: ${AUTH_ACCESS_TOKEN_EXPIRATION_SEC|9000}
+    # refresh token
+    refresh-token:
+      # secret
+      secret: ${AUTH_REFRESH_TOKEN_SECRET|c94f85dbcbaa345db57f7b2d9c38743f}
+      # expiration period in seconds
+      expiration-period-sec: ${AUTH_REFRESH_TOKEN_EXPIRATION_SEC|604800}
   # password policy
   password:
     # minimum len
@@ -45,7 +47,7 @@ auth:
   # user activation by email
   activation:
     # activation url
-    url: ${AUTH_USER_ACTIVATION_URL|http://localhost:8090/api/auth/users/activation}
+    url: ${AUTH_USER_ACTIVATION_URL|http://localhost:8090/api/auth/activation}
     # activation link live time
     ttl: ${AUTH_USER_ACTIVATION_TTL|3600}
 
@@ -85,6 +87,15 @@ storages:
       port: ${AR_DB_MASTER_PORT|25432}
       # host for master (read-write) database
       host: ${AR_DB_MASTER_HOST|localhost}
+
+# NATS client
+nats:
+  # host
+  host: ${NATS_HOST|localhost}
+  # port
+  port: ${NATS_PORT|14222}
+  # cluster Id
+  clusterId: ${NATS_CLUSTER_ID|test-cluster}
 
 # logging configuration
 log:

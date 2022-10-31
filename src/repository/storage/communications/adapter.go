@@ -20,8 +20,8 @@ type Adapter interface {
 
 // adapterImpl implements storage adapter
 type adapterImpl struct {
-	*EmailStorageImpl
-	*TemplateStorageImpl
+	*emailStorageImpl
+	*templateStorageImpl
 	aero kitAero.Aerospike
 	pg   *pg.Storage
 }
@@ -59,8 +59,8 @@ func (a *adapterImpl) Init(ctx context.Context, cfg interface{}) error {
 	}
 
 	// init storages
-	a.EmailStorageImpl = NewEmailStorage(a.pg)
-	a.TemplateStorageImpl = NewTemplateStorage(a.pg, a.aero)
+	a.emailStorageImpl = newEmailStorage(a.pg)
+	a.templateStorageImpl = newTemplateStorage(a.pg, a.aero)
 	return nil
 }
 

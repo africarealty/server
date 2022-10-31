@@ -5,6 +5,7 @@ import (
 	kitConfig "github.com/africarealty/server/src/kit/config"
 	kitHttp "github.com/africarealty/server/src/kit/http"
 	"github.com/africarealty/server/src/kit/log"
+	"github.com/africarealty/server/src/kit/queue"
 	kitAero "github.com/africarealty/server/src/kit/storages/aerospike"
 	"github.com/africarealty/server/src/kit/storages/pg"
 	"os"
@@ -37,7 +38,7 @@ type CfgCommunications struct {
 }
 
 type CfgAuth struct {
-	auth.Config
+	Session  *auth.Config
 	Password struct {
 		MinLen uint `config:"min-len"`
 	}
@@ -61,6 +62,7 @@ type Config struct {
 	Auth           *CfgAuth
 	Communications *CfgCommunications
 	Sdk            *CfgSdk
+	Nats           *queue.Config
 }
 
 func LoadConfig() (*Config, error) {

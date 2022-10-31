@@ -209,6 +209,9 @@ func (s *UserStorageImpl) GetByUsername(ctx context.Context, username string) (*
 	if err != nil {
 		return nil, err
 	}
+	if user == nil {
+		return nil, nil
+	}
 	return &user.User, nil
 }
 

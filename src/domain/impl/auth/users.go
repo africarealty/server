@@ -37,10 +37,6 @@ func (u *userSvcImpl) Create(ctx context.Context, user *domain.User) (*domain.Us
 	user.Id = kit.NewId()
 	user.LockedAt = nil
 
-	// currently create activated users
-	now := kit.Now()
-	user.ActivatedAt = &now
-
 	// check username uniqueness
 	another, err := u.storage.GetByUsername(ctx, user.Username)
 	if err != nil {
@@ -121,4 +117,42 @@ func (u *userSvcImpl) SetActivationToken(ctx context.Context, userId, token stri
 		return errors.ErrUserIdEmpty(ctx)
 	}
 	return u.storage.SetActivationToken(ctx, userId, token, ttl)
+}
+
+func (u *userSvcImpl) ActivateByToken(ctx context.Context, userId, token string) (*domain.User, error) {
+	u.l().C(ctx).Mth("activate-by-token").F(log.FF{"userId": userId}).Trc()
+	if userId == "" {
+		return nil, errors.ErrUserIdEmpty(ctx)
+	}
+	if token == "" {
+		return nil, errors.ErrUserActivationTokenEmpty(ctx, userId)
+	}
+	// get stored token by userId
+	storedToken, err := u.storage.GetActivationToken(ctx, userId)
+	if err != nil {
+		return nil, err
+	}
+	if storedToken == "" || token != storedToken {
+		return nil, errors.ErrUserActivationNotExistedOnInvalidToken(ctx, userId)
+	}
+	// get user
+	user, err := u.storage.GetUser(ctx, userId)
+	if err != nil {
+		return nil, err
+	}
+	if user.ActivatedAt != nil {
+		return nil, errors.ErrUserActivationInvalidOperation(ctx, userId)
+	}
+	if user.LockedAt != nil {
+		return nil, errors.ErrUserActivationInvalidOperation(ctx, userId)
+	}
+	// set activation date
+	now := kit.Now()
+	user.ActivatedAt = &now
+	// update storage
+	err = u.storage.UpdateUser(ctx, user)
+	if err != nil {
+		return nil, err
+	}
+	return user, nil
 }

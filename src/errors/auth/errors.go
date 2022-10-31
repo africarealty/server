@@ -133,4 +133,13 @@ var (
 	ErrUserRegPasswordTooSimple = func(ctx context.Context) error {
 		return er.WithBuilder(ErrCodeUserRegPasswordTooSimple, "password is too simple").Business().C(ctx).HttpSt(http.StatusBadRequest).Err()
 	}
+	ErrUserActivationTokenEmpty = func(ctx context.Context, userId string) error {
+		return er.WithBuilder(ErrCodeUserActivationTokenEmpty, "token empty").Business().C(ctx).F(er.FF{"userId": userId}).HttpSt(http.StatusBadRequest).Err()
+	}
+	ErrUserActivationNotExistedOnInvalidToken = func(ctx context.Context, userId string) error {
+		return er.WithBuilder(ErrCodeUserActivationNotExistedOnInvalidToken, "invalid token").Business().C(ctx).F(er.FF{"userId": userId}).HttpSt(http.StatusBadRequest).Err()
+	}
+	ErrUserActivationInvalidOperation = func(ctx context.Context, userId string) error {
+		return er.WithBuilder(ErrCodeUserActivationInvalidOperation, "invalid operation").Business().C(ctx).F(er.FF{"userId": userId}).HttpSt(http.StatusBadRequest).Err()
+	}
 )

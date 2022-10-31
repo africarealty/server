@@ -23,21 +23,21 @@ type email struct {
 	Attachments      *string `gorm:"attachments"`
 }
 
-type EmailStorageImpl struct {
+type emailStorageImpl struct {
 	pg *pg.Storage
 }
 
-func NewEmailStorage(pg *pg.Storage) *EmailStorageImpl {
-	return &EmailStorageImpl{
+func newEmailStorage(pg *pg.Storage) *emailStorageImpl {
+	return &emailStorageImpl{
 		pg: pg,
 	}
 }
 
-func (e *EmailStorageImpl) l() log.CLogger {
+func (e *emailStorageImpl) l() log.CLogger {
 	return service.L().Cmp("email-storage")
 }
 
-func (e *EmailStorageImpl) UpdateEmail(ctx context.Context, request *domain.Email) error {
+func (e *emailStorageImpl) UpdateEmail(ctx context.Context, request *domain.Email) error {
 	e.l().C(ctx).Mth("update").Dbg()
 	t := kit.Now()
 	dto := e.toEmailDto(request)
@@ -55,7 +55,7 @@ func (e *EmailStorageImpl) UpdateEmail(ctx context.Context, request *domain.Emai
 	return nil
 }
 
-func (e *EmailStorageImpl) CreateEmail(ctx context.Context, request *domain.Email) error {
+func (e *emailStorageImpl) CreateEmail(ctx context.Context, request *domain.Email) error {
 	e.l().C(ctx).Mth("create").Dbg()
 	dto := e.toEmailDto(request)
 	result := e.pg.Instance.Create(&dto)
