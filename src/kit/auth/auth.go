@@ -126,6 +126,8 @@ type AuthorizationResource struct {
 	Permissions []string
 }
 
+type ConditionFn func(context.Context, *http.Request) (bool, error)
+
 // ResourcePolicy
 type ResourcePolicy interface {
 	// Resolve determines needed authorization resources for the given request

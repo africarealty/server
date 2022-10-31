@@ -47,7 +47,7 @@ auth:
   # user activation by email
   activation:
     # activation url
-    url: ${AUTH_USER_ACTIVATION_URL|http://localhost:8090/api/auth/activation}
+    url: ${AUTH_USER_ACTIVATION_URL|http://localhost:8090/api/auth/users/activation}
     # activation link live time
     ttl: ${AUTH_USER_ACTIVATION_TTL|3600}
 
@@ -112,10 +112,6 @@ log:
 sdk:
   # sdk base url
   url: ${SDK_URL|http://localhost:8090}
-  # sdk user
-  user: ${SDK_USER|sdk}
-  # password
-  password: ${SDK_PASSWORD|sdk}
   # logging configuration
   log:
     # level
@@ -126,3 +122,10 @@ sdk:
     context: ${SDK_LOG_CONTEXT|true}
     # if true, outputs running service instance info
     service: ${SDK_LOG_SERVICE|true}
+
+# integration test config
+tests:
+  # sdk user
+  user: ${SDK_USER|admin}
+  # password
+  password: ${SDK_PASSWORD|admin}

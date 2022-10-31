@@ -20,16 +20,17 @@ type Controller interface {
 	Activation(http.ResponseWriter, *http.Request)
 	TokenRefresh(http.ResponseWriter, *http.Request)
 	SetPassword(http.ResponseWriter, *http.Request)
+	CreateUser(http.ResponseWriter, *http.Request)
 }
 
 type controllerIml struct {
 	kitHttp.BaseController
-	userRegUc      usecase.UserRegistrationUseCase
+	userRegUc      usecase.UserUseCases
 	userService    domain.UserService
 	sessionService auth.SessionsService
 }
 
-func NewController(sessionService auth.SessionsService, userService domain.UserService, userRegUc usecase.UserRegistrationUseCase) Controller {
+func NewController(sessionService auth.SessionsService, userService domain.UserService, userRegUc usecase.UserUseCases) Controller {
 	return &controllerIml{
 		BaseController: kitHttp.BaseController{
 			Logger: service.LF(),
@@ -51,7 +52,7 @@ func (c *controllerIml) l() log.CLogger {
 // @Param regRequest body RegistrationRequest true "registration request"
 // @Success 200 {object} User
 // @Failure 500 {object} http.Error
-// @Router /auth/registration [post]
+// @Router /auth/users/registration [post]
 // @tags auth
 func (c *controllerIml) Registration(w http.ResponseWriter, r *http.Request) {
 
@@ -73,6 +74,35 @@ func (c *controllerIml) Registration(w http.ResponseWriter, r *http.Request) {
 	c.RespondOK(w, c.toUserApi(user))
 }
 
+// CreateUser godoc
+// @Summary creates a new active user
+// @Accept json
+// @produce json
+// @Param regRequest body RegistrationRequest true "create request"
+// @Success 200 {object} User
+// @Failure 500 {object} http.Error
+// @Router /auth/users [post]
+// @tags auth
+func (c *controllerIml) CreateUser(w http.ResponseWriter, r *http.Request) {
+
+	ctx := r.Context()
+	c.l().C(ctx).Mth("create-user").Trc()
+
+	rq := &RegistrationRequest{}
+	if err := c.DecodeRequest(r, ctx, rq); err != nil {
+		c.RespondError(w, err)
+		return
+	}
+
+	user, err := c.userRegUc.CreateActiveUser(ctx, c.toRegRequestDomain(rq))
+	if err != nil {
+		c.RespondError(w, err)
+		return
+	}
+
+	c.RespondOK(w, c.toUserApi(user))
+}
+
 // Activation godoc
 // @Summary activates a user by token
 // @produce json
@@ -80,7 +110,7 @@ func (c *controllerIml) Registration(w http.ResponseWriter, r *http.Request) {
 // @Param token query string true "activation token"
 // @Success 200 {object} User
 // @Failure 500 {object} http.Error
-// @Router /auth/activation [post]
+// @Router /auth/users/activation [post]
 // @tags auth
 func (c *controllerIml) Activation(w http.ResponseWriter, r *http.Request) {
 
@@ -114,7 +144,7 @@ func (c *controllerIml) Activation(w http.ResponseWriter, r *http.Request) {
 // @Param loginRequest body LoginRequest true "auth request"
 // @Success 200 {object} LoginResponse
 // @Failure 500 {object} http.Error
-// @Router /auth/login [post]
+// @Router /auth/users/login [post]
 // @tags auth
 func (c *controllerIml) Login(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
@@ -139,7 +169,7 @@ func (c *controllerIml) Login(w http.ResponseWriter, r *http.Request) {
 // @Summary logouts user
 // @Accept json
 // @Produce json
-// @Router /auth/logout [post]
+// @Router /auth/users/logout [post]
 // @Success 200
 // @Failure 400 {object} http.Error
 // @Failure 500 {object} http.Error
@@ -211,7 +241,7 @@ func (c *controllerIml) TokenRefresh(w http.ResponseWriter, r *http.Request) {
 // @Param request body SetPasswordRequest true "set password request"
 // @Accept json
 // @Produce json
-// @Router /auth/password [post]
+// @Router /auth/users/password [post]
 // @Success 200
 // @Failure 400 {object} http.Error
 // @Failure 500 {object} http.Error

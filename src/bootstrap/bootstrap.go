@@ -77,7 +77,7 @@ func (s *serviceImpl) Init(ctx context.Context) error {
 	authorizeSession := auth.NewAuthorizeService(s.authStorage)
 	sessionService := impl.NewSessionsService(service.LF(), s.authStorage, s.authStorage, authorizeSession)
 	userService := auth.NewUserService(s.authStorage)
-	userRegUc := authUc.NewUserRegistrationImpl(userService, s.emailService, impl.NewPasswordService(service.LF()), s.cfg)
+	userRegUc := authUc.NewUserUseCases(userService, s.emailService, impl.NewPasswordService(service.LF()), s.cfg)
 
 	// create and set middlewares
 	mdw := kitHttp.NewMiddleware(service.LF(), sessionService, authorizeSession, resourcePolicyManager)

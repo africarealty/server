@@ -24,11 +24,12 @@ type LoginResponse struct {
 }
 
 type RegistrationRequest struct {
-	Email     string `json:"email"`     // Email - user email
-	Password  string `json:"password"`  // Password - password
-	FirstName string `json:"firstName"` // FirstName - user first name
-	LastName  string `json:"lastName"`  // LastName - user last name
-	UserType  string `json:"userType"`  // UserType - user type
+	Email        string `json:"email"`        // Email - user email
+	Password     string `json:"password"`     // Password - password
+	Confirmation string `json:"confirmation"` // Confirmation - password cnfirmation
+	FirstName    string `json:"firstName"`    // FirstName - user first name
+	LastName     string `json:"lastName"`     // LastName - user last name
+	UserType     string `json:"userType"`     // UserType - user type
 }
 
 type OwnerProfile struct {
@@ -40,12 +41,14 @@ type AgentProfile struct {
 }
 
 type User struct {
-	Id        string        `json:"id"`                  // Id - user ID
-	Email     string        `json:"email"`               // Email - email
-	FirstName string        `json:"firstName,omitempty"` // FirstName - user's first name
-	LastName  string        `json:"lastName,omitempty"`  // LastName - user's last name
-	Owner     *OwnerProfile `json:"owner,omitempty"`     // Owner - owner profile
-	Agent     *AgentProfile `json:"agent,omitempty"`     // Agent - agent profile
+	Id          string        `json:"id"`                    // Id - user ID
+	Email       string        `json:"email"`                 // Email - email
+	FirstName   string        `json:"firstName,omitempty"`   // FirstName - user's first name
+	LastName    string        `json:"lastName,omitempty"`    // LastName - user's last name
+	ActivatedAt *time.Time    `json:"activatedAt,omitempty"` // ActivatedAt - user's activation date
+	LockedAt    *time.Time    `json:"lockedAt,omitempty"`    // LockedAt - user's locking date
+	Owner       *OwnerProfile `json:"owner,omitempty"`       // Owner - owner profile
+	Agent       *AgentProfile `json:"agent,omitempty"`       // Agent - agent profile
 }
 
 type SetPasswordRequest struct {

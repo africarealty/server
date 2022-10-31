@@ -133,6 +133,12 @@ var (
 	ErrUserRegPasswordTooSimple = func(ctx context.Context) error {
 		return er.WithBuilder(ErrCodeUserRegPasswordTooSimple, "password is too simple").Business().C(ctx).HttpSt(http.StatusBadRequest).Err()
 	}
+	ErrUserRegPasswordNotSpecified = func(ctx context.Context) error {
+		return er.WithBuilder(ErrCodeUserRegPasswordNotSpecified, "password not specified").Business().C(ctx).HttpSt(http.StatusBadRequest).Err()
+	}
+	ErrUserRegPasswordConfirmationNotEqual = func(ctx context.Context) error {
+		return er.WithBuilder(ErrCodeUserRegPasswordConfirmationNotEqual, "password and confirmation aren't equal").Business().C(ctx).HttpSt(http.StatusBadRequest).Err()
+	}
 	ErrUserActivationTokenEmpty = func(ctx context.Context, userId string) error {
 		return er.WithBuilder(ErrCodeUserActivationTokenEmpty, "token empty").Business().C(ctx).F(er.FF{"userId": userId}).HttpSt(http.StatusBadRequest).Err()
 	}

@@ -7,8 +7,8 @@ import (
 	"github.com/africarealty/server/src/http/auth"
 	"github.com/africarealty/server/src/kit"
 	kitTestSuite "github.com/africarealty/server/src/kit/test/suite"
-	"github.com/africarealty/server/src/sdk"
 	"github.com/africarealty/server/src/service"
+	"github.com/africarealty/server/src/test"
 	"github.com/stretchr/testify/suite"
 	"os"
 	"testing"
@@ -16,7 +16,7 @@ import (
 
 type authTestSuite struct {
 	kitTestSuite.Suite
-	cfg *service.CfgSdk
+	cfg *service.Config
 }
 
 func (s *authTestSuite) SetupSuite() {
@@ -29,7 +29,7 @@ func (s *authTestSuite) SetupSuite() {
 	if err != nil {
 		s.Fatal(err)
 	}
-	s.cfg = cfg.Sdk
+	s.cfg = cfg
 }
 
 func (s *authTestSuite) SetupTest() {}
@@ -43,10 +43,10 @@ func (s *authTestSuite) TearDownSuite(t *testing.T) {
 
 func (s *authTestSuite) Test_Register_Ok() {
 
-	ownerSdk := sdk.New(s.cfg)
-	defer ownerSdk.Close(s.Ctx)
+	userSdk := test.NewSdk(s.cfg, &s.Suite)
+	defer userSdk.Close(s.Ctx)
 
-	user, err := ownerSdk.RegisterUser(s.Ctx, &auth.RegistrationRequest{
+	user, err := userSdk.RegisterUser(s.Ctx, &auth.RegistrationRequest{
 		Email:     fmt.Sprintf("%s@example.test", kit.NewRandString()),
 		Password:  "123456",
 		FirstName: "test",
@@ -58,4 +58,27 @@ func (s *authTestSuite) Test_Register_Ok() {
 	}
 	s.NotEmpty(user)
 	s.NotEmpty(user.Id)
+}
+
+func (s *authTestSuite) Test_CreateActiveUser_LoginAndLogout_Ok() {
+
+	// login as admin
+	sdk := test.NewSdk(s.cfg, &s.Suite)
+	defer sdk.Close(s.Ctx)
+	_ = sdk.LoginAdmin(s.Ctx)
+	defer sdk.Logout(s.Ctx)
+
+	// create an active user
+	user, sess := sdk.CreateAndLogin(s.Ctx, fmt.Sprintf("%s@example.test", kit.NewRandString()), "123456")
+	s.NotEmpty(user)
+	s.NotEmpty(user.Id)
+	s.NotEmpty(sess.SessionId)
+	s.NotEmpty(sess.AccessToken)
+	s.NotEmpty(sess.RefreshToken)
+
+	// logout
+	err := sdk.Sdk.Logout(s.Ctx)
+	if err != nil {
+		s.Fatal(err)
+	}
 }

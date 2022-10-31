@@ -1,4 +1,4 @@
-//build example
+//go:build example
 
 package listener
 
@@ -18,6 +18,12 @@ var logf = func() log.CLogger {
 	return log.L(logger)
 }
 
+var cfg = &queue.Config{
+	Host:      "localhost",
+	Port:      "14222",
+	ClusterId: "test-cluster",
+}
+
 func Test_PublishConsume_AtMostOnce_WithTwoListeners(t *testing.T) {
 
 	ctxRq := kitContext.NewRequestCtx().WithNewRequestId().Test()
@@ -35,22 +41,14 @@ func Test_PublishConsume_AtMostOnce_WithTwoListeners(t *testing.T) {
 	}
 
 	pub := jetstream.New(logf)
-	err := pub.Open(ctx, kit.NewRandString(), &queue.Config{
-		Host:      "localhost",
-		Port:      "4222",
-		ClusterId: "test-cluster",
-	})
+	err := pub.Open(ctx, kit.NewRandString(), cfg)
 	if err != nil {
 		t.Fatal(err)
 	}
 	defer pub.Close()
 
 	sub1 := jetstream.New(logf)
-	err = sub1.Open(ctx, kit.NewRandString(), &queue.Config{
-		Host:      "localhost",
-		Port:      "4222",
-		ClusterId: "test-cluster",
-	})
+	err = sub1.Open(ctx, kit.NewRandString(), cfg)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -60,11 +58,7 @@ func Test_PublishConsume_AtMostOnce_WithTwoListeners(t *testing.T) {
 	ql1.ListenAsync()
 
 	sub2 := jetstream.New(logf)
-	err = sub2.Open(ctx, kit.NewRandString(), &queue.Config{
-		Host:      "localhost",
-		Port:      "4222",
-		ClusterId: "test-cluster",
-	})
+	err = sub2.Open(ctx, kit.NewRandString(), cfg)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -102,22 +96,14 @@ func Test_PublishConsume_AtMostOnce_WithTwoListenersAndTwoHandlers(t *testing.T)
 	}
 
 	pub := jetstream.New(logf)
-	err := pub.Open(ctx, kit.NewRandString(), &queue.Config{
-		Host:      "localhost",
-		Port:      "4222",
-		ClusterId: "test-cluster",
-	})
+	err := pub.Open(ctx, kit.NewRandString(), cfg)
 	if err != nil {
 		t.Fatal(err)
 	}
 	defer pub.Close()
 
 	sub1 := jetstream.New(logf)
-	err = sub1.Open(ctx, kit.NewRandString(), &queue.Config{
-		Host:      "localhost",
-		Port:      "4222",
-		ClusterId: "test-cluster",
-	})
+	err = sub1.Open(ctx, kit.NewRandString(), cfg)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -127,11 +113,7 @@ func Test_PublishConsume_AtMostOnce_WithTwoListenersAndTwoHandlers(t *testing.T)
 	ql1.ListenAsync()
 
 	sub2 := jetstream.New(logf)
-	err = sub2.Open(ctx, kit.NewRandString(), &queue.Config{
-		Host:      "localhost",
-		Port:      "4222",
-		ClusterId: "test-cluster",
-	})
+	err = sub2.Open(ctx, kit.NewRandString(), cfg)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -170,22 +152,14 @@ func Test_PublishConsume_AtLeastOnce_WithLB_WithTwoListeners(t *testing.T) {
 	}
 
 	pub := jetstream.New(logf)
-	err := pub.Open(ctx, kit.NewRandString(), &queue.Config{
-		Host:      "localhost",
-		Port:      "4222",
-		ClusterId: "test-cluster",
-	})
+	err := pub.Open(ctx, kit.NewRandString(), cfg)
 	if err != nil {
 		t.Fatal(err)
 	}
 	defer pub.Close()
 
 	sub1 := jetstream.New(logf)
-	err = sub1.Open(ctx, kit.NewRandString(), &queue.Config{
-		Host:      "localhost",
-		Port:      "4222",
-		ClusterId: "test-cluster",
-	})
+	err = sub1.Open(ctx, kit.NewRandString(), cfg)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -194,11 +168,7 @@ func Test_PublishConsume_AtLeastOnce_WithLB_WithTwoListeners(t *testing.T) {
 	ql1.ListenAsync()
 
 	sub2 := jetstream.New(logf)
-	err = sub2.Open(ctx, kit.NewRandString(), &queue.Config{
-		Host:      "localhost",
-		Port:      "4222",
-		ClusterId: "test-cluster",
-	})
+	err = sub2.Open(ctx, kit.NewRandString(), cfg)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -239,11 +209,7 @@ func Test_PublishConsume_AtLeastOnce_WithLB_WithTwoListeners(t *testing.T) {
 	}
 
 	sub1 = jetstream.New(logf)
-	err = sub1.Open(ctx, kit.NewRandString(), &queue.Config{
-		Host:      "localhost",
-		Port:      "4222",
-		ClusterId: "test-cluster",
-	})
+	err = sub1.Open(ctx, kit.NewRandString(), cfg)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -252,11 +218,7 @@ func Test_PublishConsume_AtLeastOnce_WithLB_WithTwoListeners(t *testing.T) {
 	ql1.ListenAsync()
 
 	sub2 = jetstream.New(logf)
-	err = sub2.Open(ctx, kit.NewRandString(), &queue.Config{
-		Host:      "localhost",
-		Port:      "4222",
-		ClusterId: "test-cluster",
-	})
+	err = sub2.Open(ctx, kit.NewRandString(), cfg)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -299,11 +261,7 @@ func Test_PublishConsume_AtLeastOnce_WithoutLB_WithTwoListeners(t *testing.T) {
 	}
 
 	pub := jetstream.New(logf)
-	err := pub.Open(ctx, kit.NewRandString(), &queue.Config{
-		Host:      "localhost",
-		Port:      "4222",
-		ClusterId: "test-cluster",
-	})
+	err := pub.Open(ctx, kit.NewRandString(), cfg)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -311,11 +269,7 @@ func Test_PublishConsume_AtLeastOnce_WithoutLB_WithTwoListeners(t *testing.T) {
 
 	sub1 := jetstream.New(logf)
 	subClientId1 := kit.NewRandString()
-	err = sub1.Open(ctx, subClientId1, &queue.Config{
-		Host:      "localhost",
-		Port:      "4222",
-		ClusterId: "test-cluster",
-	})
+	err = sub1.Open(ctx, subClientId1, cfg)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -327,11 +281,7 @@ func Test_PublishConsume_AtLeastOnce_WithoutLB_WithTwoListeners(t *testing.T) {
 
 	sub2 := jetstream.New(logf)
 	subClientId2 := kit.NewRandString()
-	err = sub2.Open(ctx, subClientId2, &queue.Config{
-		Host:      "localhost",
-		Port:      "4222",
-		ClusterId: "test-cluster",
-	})
+	err = sub2.Open(ctx, subClientId2, cfg)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -375,11 +325,7 @@ func Test_PublishConsume_AtLeastOnce_WithoutLB_WithTwoListeners(t *testing.T) {
 	}
 
 	sub1 = jetstream.New(logf)
-	err = sub1.Open(ctx, subClientId1, &queue.Config{
-		Host:      "localhost",
-		Port:      "4222",
-		ClusterId: "test-cluster",
-	})
+	err = sub1.Open(ctx, subClientId1, cfg)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -410,22 +356,14 @@ func Test_PublishConsume_AtLeastOnce_WithLB_SameGroupDifferentTopic(t *testing.T
 	}
 
 	pub := jetstream.New(logf)
-	err := pub.Open(ctx, kit.NewRandString(), &queue.Config{
-		Host:      "localhost",
-		Port:      "4222",
-		ClusterId: "test-cluster",
-	})
+	err := pub.Open(ctx, kit.NewRandString(), cfg)
 	if err != nil {
 		t.Fatal(err)
 	}
 	defer pub.Close()
 
 	sub1 := jetstream.New(logf)
-	err = sub1.Open(ctx, kit.NewRandString(), &queue.Config{
-		Host:      "localhost",
-		Port:      "4222",
-		ClusterId: "test-cluster",
-	})
+	err = sub1.Open(ctx, kit.NewRandString(), cfg)
 	defer sub1.Close()
 	if err != nil {
 		t.Fatal(err)
@@ -435,11 +373,7 @@ func Test_PublishConsume_AtLeastOnce_WithLB_SameGroupDifferentTopic(t *testing.T
 	ql1.ListenAsync()
 
 	sub2 := jetstream.New(logf)
-	err = sub2.Open(ctx, kit.NewRandString(), &queue.Config{
-		Host:      "localhost",
-		Port:      "4222",
-		ClusterId: "test-cluster",
-	})
+	err = sub2.Open(ctx, kit.NewRandString(), cfg)
 	defer sub2.Close()
 	if err != nil {
 		t.Fatal(err)
@@ -449,11 +383,7 @@ func Test_PublishConsume_AtLeastOnce_WithLB_SameGroupDifferentTopic(t *testing.T
 	ql2.ListenAsync()
 
 	sub3 := jetstream.New(logf)
-	err = sub3.Open(ctx, kit.NewRandString(), &queue.Config{
-		Host:      "localhost",
-		Port:      "4222",
-		ClusterId: "test-cluster",
-	})
+	err = sub3.Open(ctx, kit.NewRandString(), cfg)
 	defer sub3.Close()
 	if err != nil {
 		t.Fatal(err)
@@ -463,11 +393,7 @@ func Test_PublishConsume_AtLeastOnce_WithLB_SameGroupDifferentTopic(t *testing.T
 	ql3.ListenAsync()
 
 	sub4 := jetstream.New(logf)
-	err = sub4.Open(ctx, kit.NewRandString(), &queue.Config{
-		Host:      "localhost",
-		Port:      "4222",
-		ClusterId: "test-cluster",
-	})
+	err = sub4.Open(ctx, kit.NewRandString(), cfg)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -525,22 +451,14 @@ func Test_PublishConsume_AtLeastOnce_WithLB_Multiple(t *testing.T) {
 	}
 
 	pub := jetstream.New(logf)
-	err := pub.Open(ctx, kit.NewRandString(), &queue.Config{
-		Host:      "localhost",
-		Port:      "4222",
-		ClusterId: "test-cluster",
-	})
+	err := pub.Open(ctx, kit.NewRandString(), cfg)
 	if err != nil {
 		t.Fatal(err)
 	}
 	defer pub.Close()
 
 	sub1 := jetstream.New(logf)
-	err = sub1.Open(ctx, kit.NewRandString(), &queue.Config{
-		Host:      "localhost",
-		Port:      "4222",
-		ClusterId: "test-cluster",
-	})
+	err = sub1.Open(ctx, kit.NewRandString(), cfg)
 	defer sub1.Close()
 	if err != nil {
 		t.Fatal(err)

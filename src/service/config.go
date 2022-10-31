@@ -49,10 +49,13 @@ type CfgAuth struct {
 }
 
 type CfgSdk struct {
-	Url      string
+	Url string
+	Log *log.Config
+}
+
+type CfgTests struct {
 	User     string
 	Password string
-	Log      *log.Config
 }
 
 type Config struct {
@@ -62,6 +65,7 @@ type Config struct {
 	Auth           *CfgAuth
 	Communications *CfgCommunications
 	Sdk            *CfgSdk
+	Tests          *CfgTests
 	Nats           *queue.Config
 }
 

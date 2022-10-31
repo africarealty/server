@@ -6,14 +6,17 @@ import (
 )
 
 const (
-	UserTypeAdmin  = "admin"
-	UserTypeClient = "client"
+	UserTypeAdmin = "admin"
+	UserTypeOwner = "owner"
+	UserTypeAgent = "agent"
 
 	AuthGroupSysAdmin = "sysadmin"
 	AuthGroupOwner    = "owner"
+	AuthGroupAgent    = "agent"
 
-	AuthRoleSysAdmin     = "sysadmin"
-	AuthRoleProfileOwner = "profile.owner"
+	AuthRoleSysAdmin       = "sysadmin"
+	AuthRoleProfileOwner   = "profile.owner"
+	AuthRoleProfileManager = "profile.manager"
 
 	AuthResUserProfileAll = "profile.all"
 	AuthResUserProfileMy  = "profile.my"

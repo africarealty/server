@@ -46,4 +46,6 @@ const (
 	ErrCodeUserActivationTokenEmpty               = "AUTH-045"
 	ErrCodeUserActivationNotExistedOnInvalidToken = "AUTH-046"
 	ErrCodeUserActivationInvalidOperation         = "AUTH-047"
+	ErrCodeUserRegPasswordNotSpecified            = "AUTH-048"
+	ErrCodeUserRegPasswordConfirmationNotEqual    = "AUTH-049"
 )

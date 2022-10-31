@@ -38,11 +38,12 @@ func (c *controllerIml) toLoginResponseApi(s *auth.Session, t *auth.SessionToken
 
 func (c *controllerIml) toRegRequestDomain(rq *RegistrationRequest) *usecase.UserRegistrationRq {
 	return &usecase.UserRegistrationRq{
-		Email:     rq.Email,
-		Password:  rq.Password,
-		UserType:  rq.UserType,
-		FirstName: rq.FirstName,
-		LastName:  rq.LastName,
+		Email:                rq.Email,
+		Password:             rq.Password,
+		UserType:             rq.UserType,
+		FirstName:            rq.FirstName,
+		LastName:             rq.LastName,
+		PasswordConfirmation: rq.Confirmation,
 	}
 }
 
@@ -66,11 +67,13 @@ func (c *controllerIml) toAgentApi(p *domain.AgentProfile) *AgentProfile {
 
 func (c *controllerIml) toUserApi(usr *domain.User) *User {
 	return &User{
-		Id:        usr.Id,
-		Email:     usr.Username,
-		FirstName: usr.FirstName,
-		LastName:  usr.LastName,
-		Owner:     c.toOwnerApi(usr.Owner),
-		Agent:     c.toAgentApi(usr.Agent),
+		Id:          usr.Id,
+		Email:       usr.Username,
+		FirstName:   usr.FirstName,
+		LastName:    usr.LastName,
+		ActivatedAt: usr.ActivatedAt,
+		LockedAt:    usr.LockedAt,
+		Owner:       c.toOwnerApi(usr.Owner),
+		Agent:       c.toAgentApi(usr.Agent),
 	}
 }

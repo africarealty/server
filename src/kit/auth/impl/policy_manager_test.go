@@ -34,7 +34,7 @@ func TestPolicyManagerSuite(t *testing.T) {
 func (s *policyManagerTestSuite) Test_WhenSingleResourceWithPositiveCondition() {
 	routeId := kit.NewRandString()
 	resourceCode := "resource"
-	resource := Resource(resourceCode, "rwxd").When(func(context.Context, *http.Request) (bool, error) { return true, nil })
+	resource := auth.Resource(resourceCode, "rwxd").When(func(context.Context, *http.Request) (bool, error) { return true, nil })
 
 	s.policyManager.RegisterResourceMapping(routeId, resource)
 
@@ -50,8 +50,8 @@ func (s *policyManagerTestSuite) Test_WhenMultipleResources_PositiveAndNegativeC
 	routeId := kit.NewRandString()
 	resourceCode1 := "resource1"
 	resourceCode2 := "resource2"
-	resource1 := Resource(resourceCode1, "rwxd").When(func(context.Context, *http.Request) (bool, error) { return true, nil })
-	resource2 := Resource(resourceCode2, "rwxd").WhenNot(func(context.Context, *http.Request) (bool, error) { return true, nil })
+	resource1 := auth.Resource(resourceCode1, "rwxd").When(func(context.Context, *http.Request) (bool, error) { return true, nil })
+	resource2 := auth.Resource(resourceCode2, "rwxd").WhenNot(func(context.Context, *http.Request) (bool, error) { return true, nil })
 
 	s.policyManager.RegisterResourceMapping(routeId, resource1, resource2)
 
@@ -67,8 +67,8 @@ func (s *policyManagerTestSuite) Test_WhenMultipleResources_NoConditions() {
 	routeId := kit.NewRandString()
 	resourceCode1 := "resource1"
 	resourceCode2 := "resource2"
-	resource1 := Resource(resourceCode1, "r")
-	resource2 := Resource(resourceCode2, "w")
+	resource1 := auth.Resource(resourceCode1, "r")
+	resource2 := auth.Resource(resourceCode2, "w")
 
 	s.policyManager.RegisterResourceMapping(routeId, resource1, resource2)
 

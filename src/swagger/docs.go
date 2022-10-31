@@ -26,7 +26,80 @@ var doc = `{
     "host": "{{.Host}}",
     "basePath": "{{.BasePath}}",
     "paths": {
-        "/auth/activation": {
+        "/auth/token/refresh": {
+            "post": {
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "auth"
+                ],
+                "summary": "refreshes auth token",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/auth.SessionToken"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/http.Error"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/http.Error"
+                        }
+                    }
+                }
+            }
+        },
+        "/auth/users": {
+            "post": {
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "auth"
+                ],
+                "summary": "creates a new active user",
+                "parameters": [
+                    {
+                        "description": "create request",
+                        "name": "regRequest",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/auth.RegistrationRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/auth.User"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/http.Error"
+                        }
+                    }
+                }
+            }
+        },
+        "/auth/users/activation": {
             "post": {
                 "produces": [
                     "application/json"
@@ -67,7 +140,7 @@ var doc = `{
                 }
             }
         },
-        "/auth/login": {
+        "/auth/users/login": {
             "post": {
                 "consumes": [
                     "application/json"
@@ -106,7 +179,7 @@ var doc = `{
                 }
             }
         },
-        "/auth/logout": {
+        "/auth/users/logout": {
             "post": {
                 "consumes": [
                     "application/json"
@@ -137,7 +210,7 @@ var doc = `{
                 }
             }
         },
-        "/auth/password": {
+        "/auth/users/password": {
             "post": {
                 "consumes": [
                     "application/json"
@@ -179,7 +252,7 @@ var doc = `{
                 }
             }
         },
-        "/auth/registration": {
+        "/auth/users/registration": {
             "post": {
                 "consumes": [
                     "application/json"
@@ -207,40 +280,6 @@ var doc = `{
                         "description": "OK",
                         "schema": {
                             "$ref": "#/definitions/auth.User"
-                        }
-                    },
-                    "500": {
-                        "description": "Internal Server Error",
-                        "schema": {
-                            "$ref": "#/definitions/http.Error"
-                        }
-                    }
-                }
-            }
-        },
-        "/auth/token/refresh": {
-            "post": {
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "auth"
-                ],
-                "summary": "refreshes auth token",
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/auth.SessionToken"
-                        }
-                    },
-                    "400": {
-                        "description": "Bad Request",
-                        "schema": {
-                            "$ref": "#/definitions/http.Error"
                         }
                     },
                     "500": {
@@ -314,6 +353,10 @@ var doc = `{
         "auth.RegistrationRequest": {
             "type": "object",
             "properties": {
+                "confirmation": {
+                    "description": "Confirmation - password cnfirmation",
+                    "type": "string"
+                },
                 "email": {
                     "description": "Email - user email",
                     "type": "string"
@@ -377,6 +420,10 @@ var doc = `{
         "auth.User": {
             "type": "object",
             "properties": {
+                "activatedAt": {
+                    "description": "ActivatedAt - user's activation date",
+                    "type": "string"
+                },
                 "agent": {
                     "description": "Agent - agent profile",
                     "$ref": "#/definitions/auth.AgentProfile"
@@ -395,6 +442,10 @@ var doc = `{
                 },
                 "lastName": {
                     "description": "LastName - user's last name",
+                    "type": "string"
+                },
+                "lockedAt": {
+                    "description": "LockedAt - user's locking date",
                     "type": "string"
                 },
                 "owner": {

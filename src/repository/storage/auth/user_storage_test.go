@@ -53,7 +53,7 @@ func (s *userStorageTestSuite) getOwnerUser() *domain.User {
 			Id:          id,
 			Username:    id + "@test.com",
 			Password:    kit.NewRandString(),
-			Type:        domain.UserTypeClient,
+			Type:        domain.UserTypeOwner,
 			FirstName:   "First",
 			LastName:    "Last",
 			ActivatedAt: &now,
