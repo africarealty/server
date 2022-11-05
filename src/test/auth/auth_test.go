@@ -1,4 +1,4 @@
-// go:build integration
+//go:build integration
 
 package auth
 
@@ -10,7 +10,6 @@ import (
 	"github.com/africarealty/server/src/service"
 	"github.com/africarealty/server/src/test"
 	"github.com/stretchr/testify/suite"
-	"os"
 	"testing"
 )
 
@@ -21,8 +20,6 @@ type authTestSuite struct {
 
 func (s *authTestSuite) SetupSuite() {
 	s.Init(service.LF())
-
-	os.Setenv("ARROOT", "/home/mikhailb/work/africarealty/dev")
 
 	// load config
 	cfg, err := service.LoadConfig()

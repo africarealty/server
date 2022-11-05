@@ -7,6 +7,7 @@ import (
 	"github.com/africarealty/server/src/kit/log"
 	"github.com/africarealty/server/src/kit/queue"
 	kitAero "github.com/africarealty/server/src/kit/storages/aerospike"
+	"github.com/africarealty/server/src/kit/storages/es"
 	"github.com/africarealty/server/src/kit/storages/pg"
 	"os"
 	"path/filepath"
@@ -18,6 +19,7 @@ import (
 type CfgStorages struct {
 	Aero *kitAero.Config
 	Pg   *pg.DbClusterConfig
+	Es   *es.Config
 }
 
 type CfgAddress struct {

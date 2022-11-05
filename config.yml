@@ -87,6 +87,29 @@ storages:
       port: ${AR_DB_MASTER_PORT|25432}
       # host for master (read-write) database
       host: ${AR_DB_MASTER_HOST|localhost}
+  # es
+  es:
+    # host
+    host: ${ES_HOST|localhost}
+    # port
+    port: 19200
+    # tracing mode
+    trace: ${ES_TRACE|true}
+    # sniffing
+    sniff: false
+    # number of shards
+    shards: ${ES_SHARDS|1}
+    # number of replicas
+    replicas: ${ES_REPLICAS|1}
+    # username (basic auth)
+    username: ${ES_USERNAME|}
+    # password
+    password: ${ES_PASSWORD|}
+    # ssl
+    ssl: ${ES_SSL|false}
+    # if true, each indexation refreshes index forcibly (good for tests)
+    # MUST NOT BE ENABLED ON PROD!!!!
+    refresh: ${ES_REFRESH|true}
 
 # NATS client
 nats:
